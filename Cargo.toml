@@ -1,0 +1,6 @@
+[package]
+name = "architect"
+version = "0.1.0"
+authors = ["White-Oak <lpzhelud@gmail.com>"]
+
+[dependencies]
