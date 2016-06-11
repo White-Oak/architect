@@ -1,5 +1,5 @@
 use std::str;
-use git2::{Repository, Error, Object, ObjectType, DiffOptions, Diff};
+use git2::{Repository, Error, Object, ObjectType, DiffOptions, Diff, Revwalk, Oid, Commit};
 
 #[derive(PartialEq, Eq, Copy, Clone)]
 enum Cache { Normal, Only, None }
@@ -14,8 +14,8 @@ pub fn run() -> Result<(), Error> {
     let mut opts = DiffOptions::new();
 
     // Prepare the diff to inspect
-    let from = repo.find_commit(revwalk.nth(0).expect("NEED MORE COMMITS").expect("NEED MORE COMMITS")).unwrap();
-    let to = repo.find_commit(revwalk.nth(1).expect("NEED MORE COMMITS").expect("NEED MORE COMMITS")).unwrap();
+    let from = try!(get_nth_commit(&repo, revwalk.nth(0)));
+    let to = try!(get_nth_commit(&repo, revwalk.nth(1)));
     println!("FROM {} TO {}", from.id(), to.id());
     let tree_from = from.tree().unwrap();
     let tree_to = to.tree().unwrap();
@@ -34,10 +34,8 @@ pub fn run() -> Result<(), Error> {
     Ok(())
 }
 
-fn tree_to_treeish<'a>(repo: &'a Repository, arg: Option<&String>)
-                       -> Result<Option<Object<'a>>, Error> {
-    let arg = match arg { Some(s) => s, None => return Ok(None) };
-    let obj = try!(repo.revparse_single(arg));
-    let tree = try!(obj.peel(ObjectType::Tree));
-    Ok(Some(tree))
+fn get_nth_commit<'repo, 'b>(repo: &'repo Repository, inp: Option<Result<Oid, Error>>) -> Result<Commit, Error> {
+    let res = try!(inp.ok_or(Error::from_str("NEED MORE COMMITS")));
+    let oid = try!(res.or(Err(Error::from_str("NEED MORE COMMITS"))));
+    repo.find_commit(oid.clone())
 }
