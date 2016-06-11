@@ -14,7 +14,7 @@ pub fn run() -> Result<(), Error> {
     let mut opts = DiffOptions::new();
 
     // Prepare the diff to inspect
-    let previous = revwalk.nth(2).expect("NEED MORE COMMITS").expect("NEED MORE COMMITS");
+    let previous = revwalk.nth(1).expect("NEED MORE COMMITS").expect("NEED MORE COMMITS");
     let string_oid = format!("{}", previous);
     println!("{}", string_oid);
     let t1 = try!(tree_to_treeish(&repo, Some(&string_oid))).unwrap();
