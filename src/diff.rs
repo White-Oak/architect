@@ -43,59 +43,12 @@ pub fn run() -> Result<(), Error> {
 
     // Generate simple output
     try!(print_stats(&diff));
-    // if args.flag_patch || !stats {
-    //     if args.color() { print!("{}", RESET); }
-    //     let mut last_color = None;
-    //     try!(diff.print(args.diff_format(), |_delta, _hunk, line| {
-    //         if args.color() {
-    //             let next = match line.origin() {
-    //                 '+' => Some(GREEN),
-    //                 '-' => Some(RED),
-    //                 '>' => Some(GREEN),
-    //                 '<' => Some(RED),
-    //                 'F' => Some(BOLD),
-    //                 'H' => Some(CYAN),
-    //                 _ => None
-    //             };
-    //             if args.color() && next != last_color {
-    //                 if last_color == Some(BOLD) || next == Some(BOLD) {
-    //                     print!("{}", RESET);
-    //                 }
-    //                 print!("{}", next.unwrap_or(RESET));
-    //                 last_color = next;
-    //             }
-    //         }
-    //
-    //         match line.origin() {
-    //             '+' | '-' | ' ' => print!("{}", line.origin()),
-    //             _ => {}
-    //         }
-    //         print!("{}", str::from_utf8(line.content()).unwrap());
-    //         true
-    //     }));
-    //     if args.color() { print!("{}", RESET); }
-    // }
-
     Ok(())
 }
 
 fn print_stats(diff: &Diff) -> Result<(), Error> {
     let stats = try!(diff.stats());
-    let mut format = git2::DIFF_STATS_NONE;
-    if true {
-        format = format | git2::DIFF_STATS_FULL;
-    }
-    if false {
-        format = format | git2::DIFF_STATS_SHORT;
-    }
-    if true {
-        format = format | git2::DIFF_STATS_NUMBER;
-    }
-    if true {
-        format = format | git2::DIFF_STATS_INCLUDE_SUMMARY;
-    }
-    let buf = try!(stats.to_buf(format, 80));
-    print!("{}", str::from_utf8(&*buf).unwrap());
+    print!("FROM HEAD TO x\nInsertions: {}; Deletions: {}", stats.insertions(), stats.deletions());
     Ok(())
 }
 
