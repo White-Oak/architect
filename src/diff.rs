@@ -10,29 +10,29 @@ pub fn run() -> Result<(), Error> {
     // Prepare our diff options based on the arguments given
     let mut opts = DiffOptions::new();
 
-    // Prepare the diff to inspect
-    let from = get_nth_commit(&repo, revwalk.nth(0))?;
-    let to = get_nth_commit(&repo, revwalk.nth(1))?;
-    println!("FROM {} TO {}", from.id(), to.id());
-    let tree_from = from.tree()?;
-    let tree_to = to.tree()?;
-    let diff = repo.diff_tree_to_tree(Some(&tree_to),  Some(&tree_from), Some(&mut opts))?;
+    let mut from = get_nth_commit(&repo, revwalk.nth(0).unwrap())?;
 
-    // Generate simple output
-    let stats = diff.stats()?;
-    println!("Insertions: {}; Deletions: {}", stats.insertions(), stats.deletions());
+    for oid in revwalk {
+        let to = get_nth_commit(&repo, oid)?;
+        println!("FROM {} TO {}", from.id(), to.id());
+        let tree_from = from.tree()?;
+        let tree_to = to.tree()?;
+        let diff = repo.diff_tree_to_tree(Some(&tree_to),  Some(&tree_from), Some(&mut opts))?;
 
-    let message = match from.message() {
-        None => "...",
-        Some(m) => m
-    };
-    println!("STARRING {}:\n{}", from.author(), message);
+        let stats = diff.stats()?;
+        println!("Insertions: {}; Deletions: {}", stats.insertions(), stats.deletions());
+        match from.message() {
+            None => println!("STARRING {}", from.author()),
+            Some(m) => println!("STARRING {}:\n{}", from.author(), m)
+        };
+        println!("");
+        from = to;
+    }
 
     Ok(())
 }
 
-fn get_nth_commit(repo: &Repository, inp: Option<Result<Oid, Error>>) -> Result<Commit, Error> {
-    let res = inp.ok_or_else (|| Error::from_str("NEED MORE COMMITS"))?;
+fn get_nth_commit(repo: &Repository, res: Result<Oid, Error>) -> Result<Commit, Error> {
     let oid = res.or_else(|_| Err(Error::from_str("NEED MORE COMMITS")))?;
     repo.find_commit(oid)
 }
