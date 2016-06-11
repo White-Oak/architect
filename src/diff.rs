@@ -14,12 +14,12 @@ pub fn run() -> Result<(), Error> {
     let mut opts = DiffOptions::new();
 
     // Prepare the diff to inspect
-    let previous = revwalk.nth(1).expect("NEED MORE COMMITS").expect("NEED MORE COMMITS");
-    let string_oid = format!("{}", previous);
-    println!("{}", string_oid);
-    let t1 = try!(tree_to_treeish(&repo, Some(&string_oid))).unwrap();
-    let head = try!(tree_to_treeish(&repo, Some(&"HEAD".to_string()))).unwrap();
-    let diff = try!(repo.diff_tree_to_tree(t1.as_tree(), head.as_tree(), Some(&mut opts)));
+    let from = revwalk.nth(0).expect("NEED MORE COMMITS").expect("NEED MORE COMMITS");
+    let to = revwalk.nth(1).expect("NEED MORE COMMITS").expect("NEED MORE COMMITS");
+    println!("FROM {} TO {}", from, to);
+    let tree_from = repo.find_commit(from).unwrap().tree().unwrap();
+    let tree_to = repo.find_commit(to).unwrap().tree().unwrap();
+    let diff = try!(repo.diff_tree_to_tree(Some(&tree_to),  Some(&tree_from), Some(&mut opts)));
 
     // Generate simple output
     try!(print_stats(&diff));
@@ -28,7 +28,7 @@ pub fn run() -> Result<(), Error> {
 
 fn print_stats(diff: &Diff) -> Result<(), Error> {
     let stats = try!(diff.stats());
-    print!("FROM HEAD TO x\nInsertions: {}; Deletions: {}", stats.insertions(), stats.deletions());
+    print!("Insertions: {}; Deletions: {}", stats.insertions(), stats.deletions());
     Ok(())
 }
 
