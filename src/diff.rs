@@ -1,5 +1,9 @@
+extern crate ansi_term;
+
 use std::str;
 use git2::{Repository, Error, DiffOptions, Oid, Time};
+use self::ansi_term::Colour::Green;
+use self::ansi_term::Colour::Red;
 
 pub fn run() -> Result<(), Error> {
     // Open repo on '.'
@@ -24,6 +28,9 @@ pub fn run() -> Result<(), Error> {
     for oid in revwalk.skip(1) {
         let to = repo.find_commit(oid?)?;
         println!("FROM {} TO {}", short_hash(from.id()), short_hash(to.id()));
+
+        // println!("This is in red: {}", Blue.paint("a red string"));
+
         // Form two trees and find a diff of them
         let tree_from = from.tree()?;
         let tree_to = to.tree()?;
@@ -31,7 +38,8 @@ pub fn run() -> Result<(), Error> {
 
         // Get stats from the diff
         let stats = diff.stats()?;
-        println!("Insertions: {}; Deletions: {}", stats.insertions(), stats.deletions());
+        println!("Insertions: {}, Deletions: {}", Green.paint(stats.insertions().to_string()),
+            Red.paint(stats.deletions().to_string()));
         match from.message() {
             None => println!("STARRING {}", from.author()),
             Some(m) => println!("STARRING {}:\n{}", from.author(), m)

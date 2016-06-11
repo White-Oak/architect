@@ -5,3 +5,4 @@ authors = ["White-Oak <lpzhelud@gmail.com>"]
 
 [dependencies]
 git2 = "*"
+ansi_term = "*"
