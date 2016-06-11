@@ -34,7 +34,7 @@ pub fn run() -> Result<(), Error> {
     Ok(())
 }
 
-fn get_nth_commit<'repo, 'b>(repo: &'repo Repository, inp: Option<Result<Oid, Error>>) -> Result<Commit, Error> {
+fn get_nth_commit(repo: &Repository, inp: Option<Result<Oid, Error>>) -> Result<Commit, Error> {
     let res = inp.ok_or(Error::from_str("NEED MORE COMMITS"))?;
     let oid = res.or(Err(Error::from_str("NEED MORE COMMITS")))?;
     repo.find_commit(oid.clone())
