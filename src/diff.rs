@@ -1,14 +1,11 @@
 use std::str;
-use git2::{Repository, Error, Object, ObjectType, DiffOptions, Diff, Revwalk, Oid, Commit};
-
-#[derive(PartialEq, Eq, Copy, Clone)]
-enum Cache { Normal, Only, None }
+use git2::{Repository, Error, DiffOptions, Oid, Commit};
 
 pub fn run() -> Result<(), Error> {
     let path = ".";
     let repo = Repository::open(path)?;
     let mut revwalk = repo.revwalk()?;
-    revwalk.push_head();
+    revwalk.push_head()?;
 
     // Prepare our diff options based on the arguments given
     let mut opts = DiffOptions::new();
@@ -35,7 +32,7 @@ pub fn run() -> Result<(), Error> {
 }
 
 fn get_nth_commit(repo: &Repository, inp: Option<Result<Oid, Error>>) -> Result<Commit, Error> {
-    let res = inp.ok_or(Error::from_str("NEED MORE COMMITS"))?;
-    let oid = res.or(Err(Error::from_str("NEED MORE COMMITS")))?;
-    repo.find_commit(oid.clone())
+    let res = inp.ok_or_else (|| Error::from_str("NEED MORE COMMITS"))?;
+    let oid = res.or_else(|_| Err(Error::from_str("NEED MORE COMMITS")))?;
+    repo.find_commit(oid)
 }
