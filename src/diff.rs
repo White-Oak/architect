@@ -14,21 +14,23 @@ pub fn run() -> Result<(), Error> {
     let mut opts = DiffOptions::new();
 
     // Prepare the diff to inspect
-    let from = revwalk.nth(0).expect("NEED MORE COMMITS").expect("NEED MORE COMMITS");
-    let to = revwalk.nth(1).expect("NEED MORE COMMITS").expect("NEED MORE COMMITS");
-    println!("FROM {} TO {}", from, to);
-    let tree_from = repo.find_commit(from).unwrap().tree().unwrap();
-    let tree_to = repo.find_commit(to).unwrap().tree().unwrap();
+    let from = repo.find_commit(revwalk.nth(0).expect("NEED MORE COMMITS").expect("NEED MORE COMMITS")).unwrap();
+    let to = repo.find_commit(revwalk.nth(1).expect("NEED MORE COMMITS").expect("NEED MORE COMMITS")).unwrap();
+    println!("FROM {} TO {}", from.id(), to.id());
+    let tree_from = from.tree().unwrap();
+    let tree_to = to.tree().unwrap();
     let diff = try!(repo.diff_tree_to_tree(Some(&tree_to),  Some(&tree_from), Some(&mut opts)));
 
     // Generate simple output
-    try!(print_stats(&diff));
-    Ok(())
-}
-
-fn print_stats(diff: &Diff) -> Result<(), Error> {
     let stats = try!(diff.stats());
-    print!("Insertions: {}; Deletions: {}", stats.insertions(), stats.deletions());
+    println!("Insertions: {}; Deletions: {}", stats.insertions(), stats.deletions());
+
+    let message = match from.message() {
+        None => "...",
+        Some(m) => m
+    };
+    println!("STARRING {}:\n{}", from.author(), message);
+
     Ok(())
 }
 
