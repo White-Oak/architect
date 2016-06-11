@@ -2,8 +2,14 @@
 name = "architect"
 version = "0.1.0"
 dependencies = [
+ "ansi_term 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "git2 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "ansi_term"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "bitflags"

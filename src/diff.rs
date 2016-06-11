@@ -1,6 +1,6 @@
 use std::str;
-use git2::{Repository, Error, DiffOptions, Oid};
 use output::*;
+use git2::{Repository, Error, DiffOptions, Oid, Time};
 
 pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     // Open repo on '.'
