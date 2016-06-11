@@ -7,12 +7,17 @@ enum Cache { Normal, Only, None }
 pub fn run() -> Result<(), Error> {
     let path = ".";
     let repo = try!(Repository::open(path));
+    let mut revwalk = try!(repo.revwalk());
+    revwalk.push_head();
 
     // Prepare our diff options based on the arguments given
     let mut opts = DiffOptions::new();
 
     // Prepare the diff to inspect
-    let t1 = try!(tree_to_treeish(&repo, Some(&"d928d46a7fc0c39afdc584003aa4cd2d2749ddf7".to_string()))).unwrap();
+    let previous = revwalk.nth(2).expect("NEED MORE COMMITS").expect("NEED MORE COMMITS");
+    let string_oid = format!("{}", previous);
+    println!("{}", string_oid);
+    let t1 = try!(tree_to_treeish(&repo, Some(&string_oid))).unwrap();
     let head = try!(tree_to_treeish(&repo, Some(&"HEAD".to_string()))).unwrap();
     let diff = try!(repo.diff_tree_to_tree(t1.as_tree(), head.as_tree(), Some(&mut opts)));
 
