@@ -1,5 +1,5 @@
 use std::str;
-use git2::{Repository, Error, DiffOptions};
+use git2::{Repository, Error, DiffOptions, Oid};
 
 pub fn run() -> Result<(), Error> {
     // Open repo on '.'
@@ -21,7 +21,7 @@ pub fn run() -> Result<(), Error> {
     // Walking through all commits, skipping first as it's the one HEAD points to
     for oid in revwalk.skip(1) {
         let to = repo.find_commit(oid?)?;
-        println!("FROM {} TO {}", from.id(), to.id());
+        println!("FROM {} TO {}", short_hash(&from.id()), short_hash(&to.id()));
         // Form two trees and find a diff of them
         let tree_from = from.tree()?;
         let tree_to = to.tree()?;
@@ -40,4 +40,11 @@ pub fn run() -> Result<(), Error> {
     }
 
     Ok(())
+}
+
+// Cut the commit hash to 7 symbols
+// https://git-scm.com/book/en/v2/Git-Tools-Revision-Selection#Short-SHA-1
+fn short_hash(full_hash: &Oid) -> String {
+    let short_hash = full_hash.to_string();
+    return short_hash[..7].to_string();
 }
