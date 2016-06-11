@@ -2,8 +2,27 @@
 extern crate git2;
 
 mod diff;
+mod output;
+
 use diff::*;
+use output::*;
+
+use std::collections::*;
 
 fn main() {
-    run().unwrap();
+    let mut stats = gather_stats().unwrap();
+    let mut gathered: BTreeMap<String, Stat> = BTreeMap::new();
+    for stat in &mut stats {
+        if !gathered.contains_key(&stat.author) {
+            gathered.insert(stat.author.clone(), stat.clone());
+        } else {
+            let s = gathered.get_mut(&stat.author).unwrap();
+            s.inserts += stat.inserts;
+            s.dels += stat.dels;
+        }
+    }
+
+    for stat in gathered.values(){
+        print_stat(stat);
+    }
 }
