@@ -1,11 +1,8 @@
-extern crate ansi_term;
-
 use std::str;
+use output::*;
 use git2::{Repository, Error, DiffOptions, Oid, Time};
-use self::ansi_term::Colour::Green;
-use self::ansi_term::Colour::Red;
 
-pub fn run() -> Result<(), Error> {
+pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     // Open repo on '.'
     let repo = Repository::open(".")?;
     // Create an iterator to 'reverse walk' from HEAD to root of a repo
@@ -28,9 +25,6 @@ pub fn run() -> Result<(), Error> {
     for oid in revwalk.skip(1) {
         let to = repo.find_commit(oid?)?;
         println!("FROM {} TO {}", short_hash(from.id()), short_hash(to.id()));
-
-        // println!("This is in red: {}", Blue.paint("a red string"));
-
         // Form two trees and find a diff of them
         let tree_from = from.tree()?;
         let tree_to = to.tree()?;
@@ -38,29 +32,24 @@ pub fn run() -> Result<(), Error> {
 
         // Get stats from the diff
         let stats = diff.stats()?;
-        println!("Insertions: {}, Deletions: {}", Green.paint(stats.insertions().to_string()),
-            Red.paint(stats.deletions().to_string()));
-        match from.message() {
-            None => println!("STARRING {}", from.author()),
-            Some(m) => println!("STARRING {}:\n{}", from.author(), m)
-        };
-        println!("");
-        stats_vec.push(Stat{
+        let new_stat = Stat{
                             author: format!("{}", to.author()),
                             inserts: stats.insertions() as u32,
                             dels: stats.deletions() as u32,
                             time: to.time(),
                             message: match from.message() {
-                                None => String::new(),
-                                Some(m) => m.into()
+                                None => None,
+                                Some(m) => Some(m.to_string())
                             }
-                        });
+                        };
+        print_stat(&new_stat);
+        stats_vec.push(new_stat);
 
         // Prepare for next iteration
         from = to;
     }
 
-    Ok(())
+    Ok(stats_vec)
 }
 
 // Cut the commit hash to 7 symbols
@@ -68,11 +57,4 @@ pub fn run() -> Result<(), Error> {
 fn short_hash(full_hash: Oid) -> String {
     let short_hash = full_hash.to_string();
     short_hash[..7].to_string()
-}
-struct Stat{
-    author: String,
-    inserts: u32,
-    dels: u32,
-    time: Time,
-    message: String
 }
