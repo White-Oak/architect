@@ -14,7 +14,9 @@ fn main() {
     let mut gathered: BTreeMap<String, Stat> = BTreeMap::new();
     for stat in &mut stats {
         if !gathered.contains_key(&stat.author) {
-            gathered.insert(stat.author.clone(), stat.clone());
+            let mut new_stat = stat.clone();
+            new_stat.message = Some(format!("Statistics for {}", stat.author));
+            gathered.insert(stat.author.clone(), new_stat);
         } else {
             let s = gathered.get_mut(&stat.author).unwrap();
             s.inserts += stat.inserts;
