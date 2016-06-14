@@ -8,8 +8,6 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
 
     fn diff_commit(repo: &Repository, from: &Commit, to: &Commit, stats: &mut Vec<Stat>,
          visited: &mut BTreeSet<Oid>) -> Result<(), Error>{
-        println!("FROM {} TO {}", short_hash(from.id()), short_hash(to.id()));
-
         // Form two trees and find a diff of them
         let tree_from = from.tree()?;
         let tree_to = to.tree()?;
@@ -26,7 +24,6 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
                                 Some(m) => Some(m.to_string())
                             }
                         };
-        print_stat(&new_stat);
         stats.push(new_stat);
         if from.parents().count() > 1 {
             println!("{} has {} parents", short_hash(from.id()), from.parents().count());
