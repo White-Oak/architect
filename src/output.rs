@@ -1,9 +1,6 @@
-extern crate ansi_term;
-
 use git2::{Time};
 
-use self::ansi_term::Colour::Green;
-use self::ansi_term::Colour::Red;
+use ansi_term::Colour::{Green, Red};
 
 pub fn print_stat(stat: &Stat){
     println!("Insertions: {}; Deletions: {}", Green.paint(stat.inserts.to_string()),
