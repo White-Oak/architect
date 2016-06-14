@@ -28,6 +28,9 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
                         };
         print_stat(&new_stat);
         stats.push(new_stat);
+        if from.parents().count() > 1 {
+            println!("{} has {} parents", short_hash(from.id()), from.parents().count());
+        }
         for parent in from.parents() {
             if !visited.contains(&parent.id()) {
                 visited.insert(parent.id());
