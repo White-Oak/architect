@@ -50,45 +50,33 @@ fn main() {
     }
 
     for stat in gathered.values(){
+        fn print_main_stats(stats: &[MainStat]){
+            print!("Commits\t");
+            for stat in stats {
+                print!("\t{}", Yellow.paint(stat.commits.to_string()));
+            }
+            println!("");
+            print!("Insertions");
+            for stat in stats {
+                print!("\t{}", Green.paint(stat.inserts.to_string()));
+            }
+            println!("");
+            print!("Deletions");
+            for stat in stats {
+                print!("\t{}", Red.paint(stat.dels.to_string()));
+            }
+            println!("");
+            println!("");
+        }
         println!("Statistics for {}", stat.author);
         println!("Commits: {}; Insertions: {}; Deletions: {}",
             Yellow.paint(stat.commits.to_string()),
             Green.paint(stat.inserts.to_string()),
             Red.paint(stat.dels.to_string()));
         println!("Days\t\tMon\tTue\tWed\tThu\tFri\tSat\tSun");
-        print!("Commits\t");
-        for i in 0..7 {
-            print!("\t{}", Yellow.paint(stat.days[i].commits.to_string()));
-        }
-        println!("");
-        print!("Insertions");
-        for i in 0..7 {
-            print!("\t{}", Green.paint(stat.days[i].inserts.to_string()));
-        }
-        println!("");
-        print!("Deletions");
-        for i in 0..7 {
-            print!("\t{}", Red.paint(stat.days[i].dels.to_string()));
-        }
-        println!("");
-        println!("");
+        print_main_stats(&stat.days);
         println!("Daytime\t\tNight\tMorning\tDay\tEvening");
-        print!("Commits\t");
-        for i in 0..4 {
-            print!("\t{}", Yellow.paint(stat.daytimes[i].commits.to_string()));
-        }
-        println!("");
-        print!("Insertions");
-        for i in 0..4 {
-            print!("\t{}", Green.paint(stat.daytimes[i].inserts.to_string()));
-        }
-        println!("");
-        print!("Deletions");
-        for i in 0..4 {
-            print!("\t{}", Red.paint(stat.daytimes[i].dels.to_string()));
-        }
-        println!("");
-        println!("");
+        print_main_stats(&stat.daytimes);
     }
 }
 
