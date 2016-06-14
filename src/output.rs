@@ -8,9 +8,9 @@ use self::ansi_term::Colour::Red;
 pub fn print_stat(stat: &Stat){
     println!("Insertions: {}; Deletions: {}", Green.paint(stat.inserts.to_string()),
         Red.paint(stat.dels.to_string()));
-    match &stat.message {
-        &None => println!("STARRING {}", stat.author),
-        &Some(ref m) => println!("STARRING {}:\n{}", stat.author, m)
+    match stat.message {
+        None => println!("STARRING {}", stat.author),
+        Some(ref m) => println!("STARRING {}:\n{}", stat.author, m)
     };
     println!("");
 }
