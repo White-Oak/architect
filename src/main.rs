@@ -5,7 +5,6 @@ extern crate chrono;
 extern crate lazysort;
 
 mod diff;
-mod output;
 
 use diff::*;
 

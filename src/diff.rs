@@ -1,6 +1,5 @@
 use std::collections::*;
 use git2::*;
-use output::*;
 
 pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     // Open repo on '.'
@@ -59,4 +58,13 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
 fn short_hash(full_hash: Oid) -> String {
     let short_hash = full_hash.to_string();
     short_hash[..7].to_string()
+}
+
+#[derive(Clone)]
+pub struct Stat{
+    pub author: String,
+    pub inserts: u32,
+    pub dels: u32,
+    pub time: Time,
+    pub message: Option<String>
 }
