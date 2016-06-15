@@ -1,4 +1,5 @@
 use git2::*;
+use std::io::{stdout, Write};
 
 pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     // Open repo on '.'
@@ -37,9 +38,18 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     let total = revwalk.count() - 1;
     let mut revwalk = repo.revwalk()?;
     revwalk.push_head()?;
-    println!("");
+    println!("Total: {}", total);
+    print!("0/{}", total);
+    let mut stdout = stdout();
+    stdout.flush().unwrap();
+    let mut last_percent = 0;
     for (i, next) in revwalk.enumerate() {
-        print!("\r{}/{}", i, total);
+        let percent = ((i * 200) as f32 / (total as f32)) as u32;
+        if  (percent - last_percent) >= 1 {
+            print!("\r{}/{}", i, total);
+            stdout.flush().unwrap();
+            last_percent = percent;
+        }
         let commit = repo.find_commit(next?)?;
         for parent in commit.parents() {
             stats.push(calculate_diff(&repo, &parent, &commit)?);
