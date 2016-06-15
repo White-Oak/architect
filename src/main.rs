@@ -22,7 +22,7 @@ fn main() {
     let mut gathered: BTreeMap<String, ResultStat> = BTreeMap::new();
     for stat in &mut stats {
         if !gathered.contains_key(&stat.author) {
-            let mut new_stat = ResultStat::new(stat.author.clone());
+            let new_stat = ResultStat::new(stat.author.clone());
             gathered.insert(stat.author.clone(), new_stat);
         }
         let mut s = gathered.get_mut(&stat.author).unwrap();
@@ -95,18 +95,13 @@ pub struct ResultStat {
     pub daytimes: [MainStat; 4]
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub struct MainStat{
     pub inserts: u32,
     pub dels: u32,
     pub commits: u32,
 }
 
-impl MainStat {
-    pub fn new() -> Self {
-        MainStat{inserts: 0, dels: 0, commits: 0}
-    }
-}
 impl ResultStat {
     pub fn new(author: String) -> Self {
         ResultStat{
@@ -114,8 +109,8 @@ impl ResultStat {
             inserts: 0,
             dels: 0,
             commits: 0,
-            days: [MainStat::new(); 7],
-            daytimes: [MainStat::new(); 4]
+            days: [MainStat::default(); 7],
+            daytimes: [MainStat::default(); 4]
         }
     }
 }
