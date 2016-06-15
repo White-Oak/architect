@@ -36,9 +36,6 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     fn diff_commit(repo: &Repository, from: &Commit, to: &Commit, stats: &mut Vec<Stat>,
          visited: &mut BTreeSet<Oid>) -> Result<(), Error>{
         stats.push(calculate_diff(repo,from,to)?);
-        if from.parents().count() > 1 {
-            println!("{} has {} parents", short_hash(from.id()), from.parents().count());
-        }
         for parent in from.parents() {
             if !visited.contains(&parent.id()) || !visited.contains(&from.id()) {
                 diff_commit(repo, &parent, from, stats, visited)?
