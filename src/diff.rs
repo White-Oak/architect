@@ -6,34 +6,37 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     // Open repo on '.'
     let repo = Repository::open(".")?;
 
-    fn diff_commit(repo: &Repository, from: &Commit, to: &Commit, stats: &mut Vec<Stat>,
-         visited: &mut BTreeSet<Oid>) -> Result<(), Error>{
+    fn calculate_diff(repo: &Repository, from: &Commit, to: &Commit) -> Result<Stat, Error> {
         // Form two trees and find a diff of them
         let tree_from = from.tree()?;
         let tree_to = to.tree()?;
-        let diff = repo.diff_tree_to_tree(Some(&tree_to),  Some(&tree_from), None)?;
+        let diff = repo.diff_tree_to_tree(Some(&tree_from),  Some(&tree_to), None)?;
         // Get stats from the diff
         let diff = diff.stats()?;
-        let new_stat = Stat{
-                            author: format!("{}", to.author()),
-                            inserts: diff.insertions() as u32,
-                            dels: diff.deletions() as u32,
-                            time: to.time(),
-                            message: match from.message() {
-                                None => None,
-                                Some(m) => Some(m.to_string())
-                            }
-                        };
-        stats.push(new_stat);
+        Ok(Stat{
+            author: format!("{}", to.author()),
+            inserts: diff.insertions() as u32,
+            dels: diff.deletions() as u32,
+            time: to.time(),
+            message: match to.message() {
+                None => None,
+                Some(m) => Some(m.to_string())
+            }
+        })
+    }
+
+    fn diff_commit(repo: &Repository, from: &Commit, to: &Commit, stats: &mut Vec<Stat>,
+         visited: &mut BTreeSet<Oid>) -> Result<(), Error>{
+        stats.push(calculate_diff(repo,from,to)?);
         if from.parents().count() > 1 {
             println!("{} has {} parents", short_hash(from.id()), from.parents().count());
         }
         for parent in from.parents() {
-            if !visited.contains(&parent.id()) {
-                visited.insert(parent.id());
+            if !visited.contains(&parent.id()) || !visited.contains(&from.id()) {
                 diff_commit(repo, &parent, from, stats, visited)?
             }
         }
+        visited.insert(from.id());
         Ok(())
     }
 
@@ -44,7 +47,7 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     let head_oid = repo.head()?.target().unwrap();
     // Our first commit is the one that HEAD points at
     let head = repo.find_commit(head_oid)?;
-    // Walking through all commits, skipping first as it's the one HEAD points to
+    // Walking through all commits
     for parent in head.parents() {
         diff_commit(&repo, &parent, &head, &mut stats, &mut visited)?
     }
