@@ -12,11 +12,11 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
         let diff = diff.stats()?;
         let author = match to.author().name() {
             Some(x) => x.to_string(),
-            None => panic!("No author for {}", to.author())
+            None => "Unknown".to_string()
         };
         let email = match to.author().email() {
             Some(x) => x.to_string(),
-            None => panic!("No email for {}", to.author())
+            None => "unknown@user.com".to_string()
         };
         Ok(Stat{
             author: author,
