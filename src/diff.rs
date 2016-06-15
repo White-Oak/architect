@@ -1,10 +1,8 @@
-use std::collections::*;
 use git2::*;
 
 pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     // Open repo on '.'
     let repo = Repository::open(".")?;
-
     fn calculate_diff(repo: &Repository, from: &Commit, to: &Commit) -> Result<Stat, Error> {
         // Form two trees and find a diff of them
         let tree_from = from.tree()?;
@@ -33,29 +31,16 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
         })
     }
 
-    fn diff_commit(repo: &Repository, from: &Commit, to: &Commit, stats: &mut Vec<Stat>,
-         visited: &mut BTreeSet<Oid>) -> Result<(), Error>{
-        stats.push(calculate_diff(repo,from,to)?);
-        for parent in from.parents() {
-            if !visited.contains(&parent.id()) || !visited.contains(&from.id()) {
-                diff_commit(repo, &parent, from, stats, visited)?
-            }
-        }
-        visited.insert(from.id());
-        Ok(())
-    }
-
     let mut stats = Vec::new();
-    let mut visited = BTreeSet::new();
-
-    // Get HEAD id from a repo. A HEAD should be present so we just unwrap this thing
-    let head_oid = repo.head()?.target().unwrap();
-    // Our first commit is the one that HEAD points at
-    let head = repo.find_commit(head_oid)?;
-    // Walking through all commits
-    for parent in head.parents() {
-        diff_commit(&repo, &parent, &head, &mut stats, &mut visited)?
+    let mut revwalk = repo.revwalk()?;
+    revwalk.push_head()?;
+    for next in revwalk {
+        let commit = repo.find_commit(next?)?;
+        for parent in commit.parents() {
+            stats.push(calculate_diff(&repo, &parent, &commit)?);
+        }
     }
+
     Ok(stats)
 }
 
