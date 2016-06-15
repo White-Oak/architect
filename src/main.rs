@@ -3,6 +3,7 @@ extern crate git2;
 extern crate ansi_term;
 extern crate chrono;
 extern crate lazysort;
+extern crate rustc_serialize;
 
 mod diff;
 
@@ -15,6 +16,9 @@ use chrono::datetime::DateTime;
 use chrono::offset::fixed::FixedOffset;
 use chrono::{Datelike, Timelike};
 use lazysort::SortedBy;
+use rustc_serialize::json;
+use std::io::prelude::*;
+use std::fs::File;
 
 fn main() {
     let mut stats = gather_stats().unwrap();
@@ -80,8 +84,14 @@ fn main() {
         println!("Daytime\t\tNight\tMorning\tDay\tEvening");
         print_main_stats(&stat.daytimes);
     }
+
+    let encoded = json::encode(&gathered).unwrap();
+
+    let mut f = File::create("out.json").unwrap();
+    f.write_all(encoded.as_bytes()).unwrap();
 }
 
+#[derive(RustcDecodable, RustcEncodable)]
 pub struct ResultStat {
     pub author: String,
     pub email: String,
@@ -90,6 +100,7 @@ pub struct ResultStat {
     pub daytimes: [MainStat; 4]
 }
 
+#[derive(RustcDecodable, RustcEncodable)]
 #[derive(Copy, Clone, Default)]
 pub struct MainStat{
     pub inserts: u32,
