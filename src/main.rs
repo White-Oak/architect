@@ -20,11 +20,11 @@ fn main() {
     let mut stats = gather_stats().unwrap();
     let mut gathered: BTreeMap<String, ResultStat> = BTreeMap::new();
     for stat in &mut stats {
-        if !gathered.contains_key(&stat.author) {
-            let new_stat = ResultStat::new(stat.author.clone());
-            gathered.insert(stat.author.clone(), new_stat);
+        if !gathered.contains_key(&stat.email) {
+            let new_stat = ResultStat::new(stat.author.clone(), stat.email.clone());
+            gathered.insert(stat.email.clone(), new_stat);
         }
-        let mut s = gathered.get_mut(&stat.author).unwrap();
+        let mut s = gathered.get_mut(&stat.email).unwrap();
 
         // A capturing closure that increases statistics for a selected stat
         let increaser = |s: &mut MainStat| {
@@ -70,7 +70,7 @@ fn main() {
             println!("");
             println!("");
         }
-        println!("Statistics for {}", stat.author);
+        println!("Statistics for {} <{}>", stat.author, stat.email);
         println!("Commits: {}; Insertions: {}; Deletions: {}",
             Yellow.paint(stat.stat.commits.to_string()),
             Green.paint(stat.stat.inserts.to_string()),
@@ -84,6 +84,7 @@ fn main() {
 
 pub struct ResultStat {
     pub author: String,
+    pub email: String,
     pub stat: MainStat,
     pub days: [MainStat; 7],
     pub daytimes: [MainStat; 4]
@@ -97,9 +98,10 @@ pub struct MainStat{
 }
 
 impl ResultStat {
-    pub fn new(author: String) -> Self {
+    pub fn new(author: String, email: String) -> Self {
         ResultStat{
             author: author,
+            email: email,
             stat: MainStat::default(),
             days: [MainStat::default(); 7],
             daytimes: [MainStat::default(); 4]

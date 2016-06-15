@@ -12,8 +12,17 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
         let diff = repo.diff_tree_to_tree(Some(&tree_from),  Some(&tree_to), None)?;
         // Get stats from the diff
         let diff = diff.stats()?;
+        let author = match to.author().name() {
+            Some(x) => x.to_string(),
+            None => panic!("No author for {}", to.author())
+        };
+        let email = match to.author().email() {
+            Some(x) => x.to_string(),
+            None => panic!("No email for {}", to.author())
+        };
         Ok(Stat{
-            author: format!("{}", to.author()),
+            author: author,
+            email: email,
             inserts: diff.insertions() as u32,
             dels: diff.deletions() as u32,
             time: to.time(),
@@ -63,6 +72,7 @@ fn short_hash(full_hash: Oid) -> String {
 #[derive(Clone)]
 pub struct Stat{
     pub author: String,
+    pub email: String,
     pub inserts: u32,
     pub dels: u32,
     pub time: Time,
