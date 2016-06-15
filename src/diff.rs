@@ -34,13 +34,18 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     let mut stats = Vec::new();
     let mut revwalk = repo.revwalk()?;
     revwalk.push_head()?;
-    for next in revwalk {
+    let total = revwalk.count() - 1;
+    let mut revwalk = repo.revwalk()?;
+    revwalk.push_head()?;
+    println!("");
+    for (i, next) in revwalk.enumerate() {
+        print!("\r{}/{}", i, total);
         let commit = repo.find_commit(next?)?;
         for parent in commit.parents() {
             stats.push(calculate_diff(&repo, &parent, &commit)?);
         }
     }
-
+    println!("");
     Ok(stats)
 }
 
