@@ -23,6 +23,7 @@ use std::fs::File;
 fn main() {
     let mut stats = gather_stats().unwrap();
     let mut gathered: BTreeMap<String, ResultStat> = BTreeMap::new();
+    let mut total = ResultStat::new("TOTAL".into(), "TOTAL".into());
     for stat in &mut stats {
         if !gathered.contains_key(&stat.email) {
             let new_stat = ResultStat::new(stat.author.clone(), stat.email.clone());
@@ -37,19 +38,23 @@ fn main() {
             s.commits += 1;
         };
         increaser(&mut s.stat);
+        increaser(&mut total.stat);
         let secs = stat.time.seconds();
         let naive_dt = NaiveDateTime::from_timestamp(secs, 0);
         let tz = FixedOffset::east(stat.time.offset_minutes() * 60);
         let dt: DateTime<FixedOffset> = DateTime::from_utc(naive_dt, tz);
         let weekday = dt.weekday().num_days_from_monday() as usize;
         increaser(&mut s.days[weekday]);
+        increaser(&mut total.days[weekday]);
         // 0 - 6 = night
         // 7 - 12 = morning
         // 13 - 18 = day
         // 19 - 24 = evening
         let daytime = (dt.hour() / 6) as usize;
         increaser(&mut s.daytimes[daytime]);
+        increaser(&mut total.daytimes[daytime]);
     }
+    gathered.insert("TOTAL".into(), total);
 
     // Create a sorted iterator of statistics
     let iter = gathered.values().sorted_by(|b, a| {
