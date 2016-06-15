@@ -7,3 +7,4 @@ authors = ["White-Oak <lpzhelud@gmail.com>"]
 git2 = "*"
 ansi_term = "*"
 chrono = "*"
+lazysort = "*"

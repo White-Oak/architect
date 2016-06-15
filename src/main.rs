@@ -2,6 +2,7 @@
 extern crate git2;
 extern crate ansi_term;
 extern crate chrono;
+extern crate lazysort;
 
 mod diff;
 mod output;
@@ -14,6 +15,7 @@ use chrono::naive::datetime::NaiveDateTime;
 use chrono::datetime::DateTime;
 use chrono::offset::fixed::FixedOffset;
 use chrono::{Datelike, Timelike};
+use lazysort::SortedBy;
 
 fn main() {
     let mut stats = gather_stats().unwrap();
@@ -49,7 +51,11 @@ fn main() {
         s.daytimes[daytime] = daytime_stat;
     }
 
-    for stat in gathered.values(){
+    // Create a sorted iterator of statistics
+    let iter = gathered.values().sorted_by(|b, a| {
+        a.commits.cmp(&b.commits)
+    });
+    for stat in iter {
         fn print_main_stats(stats: &[MainStat]){
             print!("Commits\t");
             for stat in stats {
