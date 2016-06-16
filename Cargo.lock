@@ -6,6 +6,7 @@ dependencies = [
  "chrono 0.2.22 (registry+https://github.com/rust-lang/crates.io-index)",
  "git2 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazysort 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "num_cpus 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.19 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -173,6 +174,14 @@ dependencies = [
 name = "num-traits"
 version = "0.1.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "num_cpus"
+version = "0.2.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "libc 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "openssl-sys"

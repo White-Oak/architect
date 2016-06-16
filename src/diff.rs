@@ -4,6 +4,8 @@ use std::sync::{Arc};
 use std::thread;
 use std::sync::mpsc::channel;
 use std::sync::atomic::{AtomicUsize, Ordering};
+use std::time::Duration;
+use num_cpus;
 
 pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     // Open repo on '.'
@@ -44,20 +46,23 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     for commit in revwalk {
         commits.push(commit?);
     }
+    let threads_num = num_cpus::get();
     let total = commits.len();
+    let size = total / threads_num;
     println!("Total: {}", total);
+    println!("Counting on {} threads with {} commits per one", threads_num, size);
     print!("0/{}", total);
     stdout().flush().unwrap();
 
     let current = AtomicUsize::new(0);
     let arc_current = Arc::new(current);
     let (tx, rx) = channel();
-    for i in 0..4 {
+    for i in 0..threads_num {
         let arc_current = arc_current.clone();
         let tx = tx.clone();
-        let commits = commits.clone().into_iter().skip(i * total / 4);
-        let commits = if i < 3 {
-            commits.take(total / 4)
+        let commits = commits.clone().into_iter().skip(i * size);
+        let commits = if i < threads_num - 1 {
+            commits.take(size)
         } else {
             let num = commits.len();
             commits.take(num)
@@ -70,7 +75,7 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
                 for parent in commit.parents() {
                     stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
                 }
-                arc_current.fetch_add(1, Ordering::SeqCst);
+                arc_current.fetch_add(1, Ordering::Relaxed);
             }
             tx.send(stats).unwrap();
         });
@@ -88,9 +93,10 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
         if counter >= total {
             break
         }
+        thread::sleep(Duration::from_millis(500));
     }
 
-    for _ in 0..4 {
+    for _ in 0..threads_num {
         stats.append(&mut rx.recv().unwrap());
     }
     print!("\r{}/{}", total, total);

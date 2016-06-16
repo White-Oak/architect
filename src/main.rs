@@ -4,6 +4,7 @@ extern crate ansi_term;
 extern crate chrono;
 extern crate lazysort;
 extern crate rustc_serialize;
+extern crate num_cpus;
 
 mod diff;
 
