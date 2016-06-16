@@ -10,6 +10,7 @@ use num_cpus;
 pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     // Open repo on '.'
     let repo = Repository::open(".")?;
+    /// Calculates a diff for two commits
     fn calculate_diff(repo: &Repository, from: &Commit, to: &Commit) -> Result<Stat, Error> {
         // Form two trees and find a diff of them
         let tree_from = from.tree()?;
@@ -38,14 +39,15 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
         })
     }
 
-    let mut stats = Vec::new();
-
+    // Gather all commits into a list
     let mut revwalk = repo.revwalk()?;
     revwalk.push_head()?;
     let mut commits = Vec::new();
     for commit in revwalk {
         commits.push(commit?);
     }
+
+    // Find out parameters
     let threads_num = num_cpus::get();
     let total = commits.len();
     let size = total / threads_num;
@@ -54,12 +56,14 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     print!("0/{}", total);
     stdout().flush().unwrap();
 
+    // Counts an amount of commits
     let current = AtomicUsize::new(0);
     let arc_current = Arc::new(current);
     let (tx, rx) = channel();
     for i in 0..threads_num {
         let arc_current = arc_current.clone();
         let tx = tx.clone();
+        // Get a chunk of commits for a thread
         let commits = commits.clone().into_iter().skip(i * size);
         let commits = if i < threads_num - 1 {
             commits.take(size)
@@ -67,6 +71,7 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
             let num = commits.len();
             commits.take(num)
         };
+        // Go
         thread::spawn(move || {
             let repo = Repository::open(".").unwrap();
             let mut stats = Vec::new();
@@ -81,8 +86,9 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
         });
     }
 
+    // Checking if there is enough commits to inform user about it
     let mut last_percent = 0;
-    loop{
+    loop {
         let counter = arc_current.load(Ordering::Relaxed);
         let of_half_percents = counter * 200 / total;
         if of_half_percents - last_percent >= 1 {
@@ -96,19 +102,14 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
         thread::sleep(Duration::from_millis(500));
     }
 
+    // Receiveing data from all streams
+    let mut stats = Vec::new();
     for _ in 0..threads_num {
         stats.append(&mut rx.recv().unwrap());
     }
     print!("\r{}/{}", total, total);
     println!("");
     Ok(stats)
-}
-
-// Cut the commit hash to 7 symbols
-// https://git-scm.com/book/en/v2/Git-Tools-Revision-Selection#Short-SHA-1
-fn short_hash(full_hash: Oid) -> String {
-    let short_hash = full_hash.to_string();
-    short_hash[..7].to_string()
 }
 
 #[derive(Clone)]
