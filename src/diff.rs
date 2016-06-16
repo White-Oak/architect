@@ -37,8 +37,6 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     }
 
     let mut stats = Vec::new();
-    let visited: BTreeSet<Oid> = BTreeSet::new();
-    let visited_arc = Arc::new(Mutex::new(visited));
 
     let mut revwalk = repo.revwalk()?;
     revwalk.push_head()?;
@@ -47,26 +45,21 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     revwalk.push_head()?;
     let mut commits = Vec::new();
     for commit in revwalk {
-        commits.push(commit);
+        commits.push(commit?);
     }
     println!("Total: {}", total);
     print!("0/{}", total);
     stdout().flush().unwrap();
 
-    let curr_arc = visited_arc.clone();
+    let first = commits.clone().into_iter().skip(total/2);
     let (tx, rx) = channel();
     thread::spawn(move || {
         let repo = Repository::open(".").unwrap();
         let mut stats = Vec::new();
-        let mut revwalk = repo.revwalk().unwrap();
-        revwalk.push_head().unwrap();
-        for (_, next) in revwalk.skip(total/2).enumerate() {
-            let commit = repo.find_commit(next.unwrap()).unwrap();
-            if !curr_arc.lock().unwrap().contains(&commit.id()) {
-                for parent in commit.parents() {
-                    stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
-                    curr_arc.lock().unwrap().insert(parent.id());
-                }
+        for (_, next) in first.enumerate() {
+            let commit = repo.find_commit(next).unwrap();
+            for parent in commit.parents() {
+                stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
             }
         }
         tx.send(stats).unwrap();
@@ -74,13 +67,10 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
 
     let mut revwalk = repo.revwalk().unwrap();
     revwalk.push_head().unwrap();
-    for (_, next) in revwalk.enumerate() {
-        let commit = repo.find_commit(next.unwrap()).unwrap();
-        if !visited_arc.lock().unwrap().contains(&commit.id()) {
-            for parent in commit.parents() {
-                stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
-                visited_arc.lock().unwrap().insert(parent.id());
-            }
+    for (_, next) in commits.into_iter().take(total/2).enumerate() {
+        let commit = repo.find_commit(next).unwrap();
+        for parent in commit.parents() {
+            stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
         }
     }
 
