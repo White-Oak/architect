@@ -43,6 +43,12 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     let mut revwalk = repo.revwalk()?;
     revwalk.push_head()?;
     let total = revwalk.count() - 1;
+    let mut revwalk = repo.revwalk()?;
+    revwalk.push_head()?;
+    let mut commits = Vec::new();
+    for commit in revwalk {
+        commits.push(commit);
+    }
     println!("Total: {}", total);
     print!("0/{}", total);
     stdout().flush().unwrap();
@@ -56,9 +62,11 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
         revwalk.push_head().unwrap();
         for (_, next) in revwalk.skip(total/2).enumerate() {
             let commit = repo.find_commit(next.unwrap()).unwrap();
-            for parent in commit.parents() {
-                stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
-                curr_arc.lock().unwrap().insert(parent.id());
+            if !curr_arc.lock().unwrap().contains(&commit.id()) {
+                for parent in commit.parents() {
+                    stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
+                    curr_arc.lock().unwrap().insert(parent.id());
+                }
             }
         }
         tx.send(stats).unwrap();
