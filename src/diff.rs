@@ -1,11 +1,9 @@
 use git2::*;
 use std::io::{stdout, Write};
-use std::collections::*;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc};
 use std::thread;
 use std::sync::mpsc::channel;
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::rc::Rc;
 
 pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     // Open repo on '.'
@@ -51,39 +49,32 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     print!("0/{}", total);
     stdout().flush().unwrap();
 
-    let first = commits.clone().into_iter().skip(total/2);
-    let (tx, rx) = channel();
     let current = AtomicUsize::new(0);
     let arc_current = Arc::new(current);
-    let local_arc_current = arc_current.clone();
-    thread::spawn(move || {
-        let repo = Repository::open(".").unwrap();
-        let mut stats = Vec::new();
-        for next in first {
-            let commit = repo.find_commit(next).unwrap();
-            for parent in commit.parents() {
-                stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
+    let (tx, rx) = channel();
+    for i in 0..4 {
+        let arc_current = arc_current.clone();
+        let tx = tx.clone();
+        let commits = commits.clone().into_iter().skip(i * total / 4);
+        let commits = if i < 3 {
+            commits.take(total / 4)
+        } else {
+            let num = commits.len();
+            commits.take(num)
+        };
+        thread::spawn(move || {
+            let repo = Repository::open(".").unwrap();
+            let mut stats = Vec::new();
+            for next in commits {
+                let commit = repo.find_commit(next).unwrap();
+                for parent in commit.parents() {
+                    stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
+                }
+                arc_current.fetch_add(1, Ordering::SeqCst);
             }
-            local_arc_current.fetch_add(1, Ordering::SeqCst);
-        }
-        tx.send(stats).unwrap();
-    });
-
-    let first = commits.clone().into_iter().take(total/2);
-    let (tx2, rx2) = channel();
-    let local_arc_current = arc_current.clone();
-    thread::spawn(move || {
-        let repo = Repository::open(".").unwrap();
-        let mut stats = Vec::new();
-        for (_, next) in first.enumerate() {
-            let commit = repo.find_commit(next).unwrap();
-            for parent in commit.parents() {
-                stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
-            }
-            local_arc_current.fetch_add(1, Ordering::SeqCst);
-        }
-        tx2.send(stats).unwrap();
-    });
+            tx.send(stats).unwrap();
+        });
+    }
 
     let mut last_percent = 0;
     loop{
@@ -99,8 +90,9 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
         }
     }
 
-    stats.append(&mut rx.recv().unwrap());
-    stats.append(&mut rx2.recv().unwrap());
+    for _ in 0..4 {
+        stats.append(&mut rx.recv().unwrap());
+    }
     print!("\r{}/{}", total, total);
     println!("");
     Ok(stats)
