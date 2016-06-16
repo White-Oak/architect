@@ -6,7 +6,7 @@ use chrono::datetime::DateTime;
 use chrono::offset::fixed::FixedOffset;
 use chrono::{Datelike, Timelike};
 
-pub fn process(mut stats: Vec<Stat>) -> BTreeMap<String, ResultStat>{
+pub fn process(mut stats: Vec<Stat>) -> BTreeMap<String, ResultStat> {
     let mut gathered: BTreeMap<String, ResultStat> = BTreeMap::new();
     let mut total = ResultStat::new("TOTAL".into(), "TOTAL".into());
     for stat in &mut stats {
@@ -49,12 +49,12 @@ pub struct ResultStat {
     pub email: String,
     pub stat: MainStat,
     pub days: [MainStat; 7],
-    pub daytimes: [MainStat; 4]
+    pub daytimes: [MainStat; 4],
 }
 
 #[derive(RustcDecodable, RustcEncodable)]
 #[derive(Copy, Clone, Default)]
-pub struct MainStat{
+pub struct MainStat {
     pub inserts: u32,
     pub dels: u32,
     pub commits: u32,
@@ -62,12 +62,12 @@ pub struct MainStat{
 
 impl ResultStat {
     pub fn new(author: String, email: String) -> Self {
-        ResultStat{
+        ResultStat {
             author: author,
             email: email,
             stat: MainStat::default(),
             days: [MainStat::default(); 7],
-            daytimes: [MainStat::default(); 4]
+            daytimes: [MainStat::default(); 4],
         }
     }
 }

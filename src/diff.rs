@@ -1,6 +1,6 @@
 use git2::*;
 use std::io::{stdout, Write};
-use std::sync::{Arc};
+use std::sync::Arc;
 use std::thread;
 use std::sync::mpsc::channel;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -15,18 +15,18 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
         // Form two trees and find a diff of them
         let tree_from = from.tree()?;
         let tree_to = to.tree()?;
-        let diff = repo.diff_tree_to_tree(Some(&tree_from),  Some(&tree_to), None)?;
+        let diff = repo.diff_tree_to_tree(Some(&tree_from), Some(&tree_to), None)?;
         // Get stats from the diff
         let diff = diff.stats()?;
         let author = match to.author().name() {
             Some(x) => x.to_string(),
-            None => "Unknown".to_string()
+            None => "Unknown".to_string(),
         };
         let email = match to.author().email() {
             Some(x) => x.to_string(),
-            None => "unknown@user.com".to_string()
+            None => "unknown@user.com".to_string(),
         };
-        Ok(Stat{
+        Ok(Stat {
             author: author,
             email: email,
             inserts: diff.insertions() as u32,
@@ -34,8 +34,8 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
             time: to.time(),
             message: match to.message() {
                 None => None,
-                Some(m) => Some(m.to_string())
-            }
+                Some(m) => Some(m.to_string()),
+            },
         })
     }
 
@@ -52,7 +52,9 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     let total = commits.len();
     let size = total / threads_num;
     println!("Total: {}", total);
-    println!("Counting on {} threads with {} commits per one", threads_num, size);
+    println!("Counting on {} threads with {} commits per one",
+             threads_num,
+             size);
     print!("0/{}", total);
     stdout().flush().unwrap();
 
@@ -97,7 +99,7 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
             last_percent = of_half_percents;
         }
         if counter >= total {
-            break
+            break;
         }
         thread::sleep(Duration::from_millis(500));
     }
@@ -113,11 +115,11 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
 }
 
 #[derive(Clone)]
-pub struct Stat{
+pub struct Stat {
     pub author: String,
     pub email: String,
     pub inserts: u32,
     pub dels: u32,
     pub time: Time,
-    pub message: Option<String>
+    pub message: Option<String>,
 }

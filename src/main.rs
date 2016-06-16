@@ -22,11 +22,9 @@ fn main() {
     let stats = gather_stats().unwrap();
     let gathered = process(stats);
     // Create a sorted iterator of statistics
-    let iter = gathered.values().sorted_by(|b, a| {
-        a.stat.commits.cmp(&b.stat.commits)
-    });
+    let iter = gathered.values().sorted_by(|b, a| a.stat.commits.cmp(&b.stat.commits));
     for stat in iter {
-        fn print_main_stats(stats: &[MainStat]){
+        fn print_main_stats(stats: &[MainStat]) {
             print!("Commits\t");
             for stat in stats {
                 print!("\t{}", Yellow.paint(stat.commits.to_string()));
@@ -46,9 +44,9 @@ fn main() {
         }
         println!("Statistics for {} <{}>", stat.author, stat.email);
         println!("Commits: {}; Insertions: {}; Deletions: {}",
-            Yellow.paint(stat.stat.commits.to_string()),
-            Green.paint(stat.stat.inserts.to_string()),
-            Red.paint(stat.stat.dels.to_string()));
+                 Yellow.paint(stat.stat.commits.to_string()),
+                 Green.paint(stat.stat.inserts.to_string()),
+                 Red.paint(stat.stat.dels.to_string()));
         println!("Days\t\tMon\tTue\tWed\tThu\tFri\tSat\tSun");
         print_main_stats(&stat.days);
         println!("Daytime\t\tNight\tMorning\tDay\tEvening");
