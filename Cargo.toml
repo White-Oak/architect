@@ -10,3 +10,5 @@ chrono = "*"
 lazysort = "*"
 rustc-serialize = "*"
 num_cpus = "0.2.13"
+qmlrs = {git = "https://github.com/White-Oak/qmlrs", branch = "qtcharts-fix"}
+regex = "*"
