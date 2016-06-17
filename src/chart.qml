@@ -49,18 +49,18 @@ ApplicationWindow {
         height: 400
 
         title: "Commits in repo by day"
-        legend.alignment: Qt.AlignBottom
+        legend.visible: false
         antialiasing: true
 
         PieSeries {
           id: pieSeriesDay
-          PieSlice { label: "Mon"; value: c1 }
-          PieSlice { label: "Tue"; value: c2  }
-          PieSlice { label: "Wed"; value: c3  }
-          PieSlice { label: "Thu"; value: c4  }
-          PieSlice { label: "Fri"; value: c5  }
-          PieSlice { label: "Sat"; value: c6  }
-          PieSlice { label: "Sun"; value: c7  }
+          PieSlice { label: "Mon"; labelVisible:true; value: c1 }
+          PieSlice { label: "Tue"; labelVisible:true; value: c2  }
+          PieSlice { label: "Wed"; labelVisible:true; value: c3  }
+          PieSlice { label: "Thu"; labelVisible:true; value: c4  }
+          PieSlice { label: "Fri"; labelVisible:true; value: c5  }
+          PieSlice { label: "Sat"; labelVisible:true; value: c6  }
+          PieSlice { label: "Sun"; labelVisible:true; value: c7  }
         }
       }
 
@@ -70,15 +70,15 @@ ApplicationWindow {
         height: 400
 
         title: "Commits in repo by time"
-        legend.alignment: Qt.AlignBottom
+        legend.visible: false
         antialiasing: true
 
         PieSeries {
           id: pieSeriesTime
-          PieSlice { label: "Morning"; value: cd1 }
-          PieSlice { label: "Day"; value: cd2  }
-          PieSlice { label: "Evening"; value: cd3  }
-          PieSlice { label: "Night"; value: cd4  }
+          PieSlice { label: "Morning"; labelVisible:true; value: cd1 }
+          PieSlice { label: "Day"; labelVisible:true; value: cd2  }
+          PieSlice { label: "Evening"; labelVisible:true; value: cd3  }
+          PieSlice { label: "Night"; labelVisible:true; value: cd4  }
         }
       }
     }
