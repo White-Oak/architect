@@ -20,3 +20,4 @@ Qt version also requires a Qt installation in a system with at least following m
 
 * Default, CLI: `cargo install` to install Architect as `architect` executable.
 * Qt: `cargo install --features "qt"` to install Architect's GUI version based on Qt.
+* To dump per-commit data into csv file use `csvdump` feature.
