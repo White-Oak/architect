@@ -1,4 +1,5 @@
-use stats::*;
+#![cfg(feature = "qt")]
+use super::super::stats::*;
 
 use std::collections::*;
 use qmlrs::*;
@@ -7,7 +8,7 @@ use std::fs::File;
 use std::io::Error;
 use regex::Regex;
 
-pub fn view(gathered: &BTreeMap<String, ResultStat>) {
+pub fn output(gathered: &BTreeMap<String, ResultStat>) {
     save_data(gathered.get("TOTAL").unwrap()).unwrap();
     let mut engine = Engine::new();
 
