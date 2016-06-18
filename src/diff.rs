@@ -27,6 +27,7 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
             None => "unknown@user.com".to_string(),
         };
         Ok(Stat {
+            id: to.id(),
             author: author,
             email: email,
             inserts: diff.insertions() as u32,
@@ -53,8 +54,8 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     let size = total / threads_num;
     println!("Total: {}", total);
     println!("Counting on {} threads with {} commits per one",
-             threads_num,
-             size);
+    threads_num,
+    size);
     print!("0/{}", total);
     stdout().flush().unwrap();
 
@@ -79,8 +80,12 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
             let mut stats = Vec::new();
             for next in commits {
                 let commit = repo.find_commit(next).unwrap();
-                for parent in commit.parents() {
-                    stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
+                let parents = commit.parents();
+                // Skip if merge commit
+                if parents.len() == 1 {
+                    for parent in commit.parents() {
+                        stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
+                    }
                 }
                 arc_current.fetch_add(1, Ordering::Relaxed);
             }
@@ -116,6 +121,7 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
 
 #[derive(Clone)]
 pub struct Stat {
+    pub id: Oid,
     pub author: String,
     pub email: String,
     pub inserts: u32,
