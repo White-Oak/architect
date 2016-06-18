@@ -27,6 +27,7 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
             None => "unknown@user.com".to_string(),
         };
         Ok(Stat {
+            id: to.id(),
             author: author,
             email: email,
             inserts: diff.insertions() as u32,
@@ -80,7 +81,7 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
             for next in commits {
                 let commit = repo.find_commit(next).unwrap();
                 let parents = commit.parents();
-                // Skip if merge commit 
+                // Skip if merge commit
                 if parents.len() == 1 {
                     for parent in commit.parents() {
                         stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
@@ -120,6 +121,7 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
 
 #[derive(Clone)]
 pub struct Stat {
+    pub id: Oid,
     pub author: String,
     pub email: String,
     pub inserts: u32,
