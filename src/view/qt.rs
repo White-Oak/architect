@@ -6,7 +6,6 @@ use qmlrs::*;
 use std::io::prelude::*;
 use std::fs::File;
 use std::io::Error;
-use regex::Regex;
 
 pub fn output(gathered: &BTreeMap<String, ResultStat>) {
     save_data(gathered.get("TOTAL").unwrap()).unwrap();
@@ -24,9 +23,8 @@ fn save_data(total: &ResultStat) -> Result<(), Error> {
 
     // Functions that replaces code phrases in a given string
     fn replace(c: &str, num: u32, i: usize, data: &str) -> String {
-        let re = Regex::new(&format!("{}{}", c, i)).unwrap();
         let rep: &str = &num.to_string();
-        re.replace(&data, rep)
+        data.replace(&format!("{}{}", c, i), rep)
     }
     for (i, item) in days.iter().enumerate().map(|(i, e)| (i + 1, e)) {
         data = replace("c", item.commits, i, &data);
@@ -36,7 +34,7 @@ fn save_data(total: &ResultStat) -> Result<(), Error> {
 
     let times = total.daytimes;
     for (i, item) in times.iter().enumerate().map(|(i, e)| (i + 1, e)) {
-        data = replace("cd", item.commits, i, &data);
+        data = replace("cdt", item.commits, i, &data);
     }
     f.write_all(data.as_bytes())?;
     Ok(())

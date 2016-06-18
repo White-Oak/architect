@@ -75,10 +75,10 @@ ApplicationWindow {
 
         PieSeries {
           id: pieSeriesTime
-          PieSlice { label: "Morning"; labelVisible:true; value: cd1 }
-          PieSlice { label: "Day"; labelVisible:true; value: cd2  }
-          PieSlice { label: "Evening"; labelVisible:true; value: cd3  }
-          PieSlice { label: "Night"; labelVisible:true; value: cd4  }
+          PieSlice { label: "Morning"; labelVisible:true; value: cdt1 }
+          PieSlice { label: "Day"; labelVisible:true; value: cdt2  }
+          PieSlice { label: "Evening"; labelVisible:true; value: cdt3  }
+          PieSlice { label: "Night"; labelVisible:true; value: cdt4  }
         }
       }
     }

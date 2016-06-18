@@ -10,7 +10,6 @@ chrono = "*"
 lazysort = "*"
 rustc-serialize = "*"
 num_cpus = "*"
-regex = "*"
 time = "*"
 csv = "*"
 

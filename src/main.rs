@@ -8,7 +8,6 @@ extern crate num_cpus;
 #[macro_use]
 #[cfg(feature = "qt")]
 extern crate qmlrs;
-extern crate regex;
 extern crate time;
 // #[cfg(feature = "csv")]
 extern crate csv;
