@@ -17,7 +17,7 @@ pub fn output(gathered: &BTreeMap<String, ResultStat>) {
     engine.exec();
 }
 
-fn save_data(total: &ResultStat) -> Result<(), Error>{
+fn save_data(total: &ResultStat) -> Result<(), Error> {
     let mut f = File::create("chart.qml")?;
     let days = total.days;
     let mut data = include_str!("chart.qml").to_string();

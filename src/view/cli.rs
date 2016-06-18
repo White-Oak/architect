@@ -5,7 +5,7 @@ use lazysort::SortedBy;
 
 use super::super::stats::*;
 
-pub fn output(gathered: &BTreeMap<String, ResultStat>){
+pub fn output(gathered: &BTreeMap<String, ResultStat>) {
     // Create a sorted iterator of statistics
     let iter = gathered.values().sorted_by(|b, a| a.stat.commits.cmp(&b.stat.commits));
     for stat in iter {
@@ -29,9 +29,9 @@ pub fn output(gathered: &BTreeMap<String, ResultStat>){
         }
         println!("Statistics for {} <{}>", stat.author, stat.email);
         println!("Commits: {}; Insertions: {}; Deletions: {}",
-        Yellow.paint(stat.stat.commits.to_string()),
-        Green.paint(stat.stat.inserts.to_string()),
-        Red.paint(stat.stat.dels.to_string()));
+                 Yellow.paint(stat.stat.commits.to_string()),
+                 Green.paint(stat.stat.inserts.to_string()),
+                 Red.paint(stat.stat.dels.to_string()));
         println!("Days\t\tMon\tTue\tWed\tThu\tFri\tSat\tSun");
         print_main_stats(&stat.days);
         println!("Daytime\t\tNight\tMorning\tDay\tEvening");
