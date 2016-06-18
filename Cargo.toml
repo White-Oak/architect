@@ -20,4 +20,5 @@ optional = true
 [features]
 default = ["cli"]
 cli = []
+html = []
 qt = ["qmlrs"]

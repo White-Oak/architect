@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Architect Charts</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+
+    <script>
+        var data = {"TOTAL":{"author":"TOTAL","email":"TOTAL","stat":{"inserts":1836,"dels":907,"commits":72},"days":[{"inserts":0,"dels":0,"commits":0},{"inserts":207,"dels":63,"commits":8},{"inserts":173,"dels":126,"commits":14},{"inserts":219,"dels":177,"commits":8},{"inserts":291,"dels":83,"commits":6},{"inserts":868,"dels":395,"commits":33},{"inserts":78,"dels":63,"commits":3}],"daytimes":[{"inserts":354,"dels":114,"commits":11},{"inserts":393,"dels":307,"commits":22},{"inserts":754,"dels":258,"commits":29},{"inserts":335,"dels":228,"commits":10}]},"lpzhelud@gmail.com":{"author":"White-Oak","email":"lpzhelud@gmail.com","stat":{"inserts":1740,"dels":872,"commits":67},"days":[{"inserts":0,"dels":0,"commits":0},{"inserts":207,"dels":63,"commits":8},{"inserts":173,"dels":126,"commits":14},{"inserts":219,"dels":177,"commits":8},{"inserts":291,"dels":83,"commits":6},{"inserts":772,"dels":360,"commits":28},{"inserts":78,"dels":63,"commits":3}],"daytimes":[{"inserts":354,"dels":114,"commits":11},{"inserts":393,"dels":307,"commits":22},{"inserts":658,"dels":223,"commits":24},{"inserts":335,"dels":228,"commits":10}]},"riseremi@icloud.com":{"author":"Remi","email":"riseremi@icloud.com","stat":{"inserts":96,"dels":35,"commits":5},"days":[{"inserts":0,"dels":0,"commits":0},{"inserts":0,"dels":0,"commits":0},{"inserts":0,"dels":0,"commits":0},{"inserts":0,"dels":0,"commits":0},{"inserts":0,"dels":0,"commits":0},{"inserts":96,"dels":35,"commits":5},{"inserts":0,"dels":0,"commits":0}],"daytimes":[{"inserts":0,"dels":0,"commits":0},{"inserts":0,"dels":0,"commits":0},{"inserts":96,"dels":35,"commits":5},{"inserts":0,"dels":0,"commits":0}]}};
+
+        console.log(data.TOTAL);
+
+        var rawDays = data.TOTAL.days;
+
+        google.charts.load('current', {packages: ['bar']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var dataDays = [];
+            var dataDaysTemplate = [
+                'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',
+            ];
+
+            dataDaysTemplate.forEach(function(day, i) {
+                day = [day, rawDays[i].inserts, rawDays[i].dels];
+                dataDays.push(day);
+            });
+
+            var data = google.visualization.arrayToDataTable([
+              ['Day', 'Additions', 'Deletions']
+            ].concat(dataDays));
+
+            var options = {
+              chart: {
+                title: 'Total additions/deletions for the repo',
+                subtitle: '',
+              }
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('days-chart'));
+
+            chart.draw(data, options);
+          }
+    </script>
+
+    <div id="days-chart" style="height:400px;width:800px"></div>
+
+</body>
+</html>
