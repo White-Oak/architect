@@ -15,7 +15,7 @@ pub fn output(gathered: &BTreeMap<String, ResultStat>) {
 
     let json_data = json::encode(&gathered).unwrap();
 
-    let script = ["var data = ", &json_data, ";"].concat();
+    let script = format!("var data = {};", json_data);
 
     let result: String = html.replace("{architect-data}", &script);
 
