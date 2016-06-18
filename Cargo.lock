@@ -10,6 +10,7 @@ dependencies = [
  "qmlrs 0.1.1 (git+https://github.com/White-Oak/qmlrs?branch=qtcharts-fix)",
  "regex 0.1.71 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.19 (registry+https://github.com/rust-lang/crates.io-index)",
+ "time 0.1.35 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

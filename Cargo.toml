@@ -11,6 +11,7 @@ lazysort = "*"
 rustc-serialize = "*"
 num_cpus = "*"
 regex = "*"
+time = "*"
 
 [dependencies.qmlrs]
 git = "https://github.com/White-Oak/qmlrs"
