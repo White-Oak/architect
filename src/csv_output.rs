@@ -32,7 +32,7 @@ impl LocalStat{
             Some(m) => m,
             None => "".to_string()
         };
-        let message = message.replace("\n", "\\n");
+        // let message = message.replace("\n", "\\n");
         LocalStat{
             id: stat.id.to_string(),
             author: stat.author,
