@@ -1,3 +1,5 @@
+#![cfg(feature = "csvdump")]
+
 use diff::*;
 
 use std::io::prelude::*;

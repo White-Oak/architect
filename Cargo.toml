@@ -11,14 +11,18 @@ lazysort = "*"
 rustc-serialize = "*"
 num_cpus = "*"
 time = "*"
-csv = "*"
 
 [dependencies.qmlrs]
 git = "https://github.com/White-Oak/qmlrs"
 branch = "qtcharts-fix"
 optional = true
 
+[dependencies.csv]
+version = "*"
+optional = true
+
 [features]
 default = ["cli"]
 cli = []
 qt = ["qmlrs"]
+csvdump = ["csv"]

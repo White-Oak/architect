@@ -1,4 +1,5 @@
 #![feature(question_mark)]
+#![feature(stmt_expr_attributes)]
 extern crate git2;
 extern crate ansi_term;
 extern crate chrono;
@@ -9,7 +10,7 @@ extern crate num_cpus;
 #[cfg(feature = "qt")]
 extern crate qmlrs;
 extern crate time;
-// #[cfg(feature = "csv")]
+#[cfg(feature = "csvdump")]
 extern crate csv;
 
 use rustc_serialize::json;
@@ -25,12 +26,15 @@ mod csv_output;
 use stats::*;
 use diff::*;
 use view::*;
+#[cfg(feature = "csvdump")]
 use csv_output::*;
 
 fn main() {
     let start = precise_time_s();
     let stats = gather_stats().unwrap();
     let gather_time = precise_time_s() - start;
+
+    #[cfg(feature = "csvdump")]
     csv_dump(&stats);
 
     let start = precise_time_s();

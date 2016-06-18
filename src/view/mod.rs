@@ -5,12 +5,10 @@ use super::stats::ResultStat;
 mod cli;
 mod qt;
 
-#[cfg(all(feature = "cli", not(feature = "qt")))]
 pub fn output(gathered: &BTreeMap<String, ResultStat>) {
+    #[cfg(all(feature = "cli", not(feature = "qt")))]
     cli::output(gathered);
-}
 
-#[cfg(feature = "qt")]
-pub fn output(gathered: &BTreeMap<String, ResultStat>) {
+    #[cfg(feature = "qt")]
     qt::output(gathered);
 }
