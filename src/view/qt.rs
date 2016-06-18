@@ -21,25 +21,22 @@ fn save_data(total: &ResultStat) -> Result<(), Error> {
     let mut f = File::create("chart.qml")?;
     let days = total.days;
     let mut data = include_str!("chart.qml").to_string();
-    for (i, item) in days.iter().enumerate() {
-        let i = i + 1;
-        let re = Regex::new(&format!("c{}", i)).unwrap();
-        let rep: &str = &item.commits.to_string();
-        data = re.replace(&data, rep);
-        let re = Regex::new(&format!("a{}", i)).unwrap();
-        let rep: &str = &item.inserts.to_string();
-        data = re.replace(&data, rep);
-        let re = Regex::new(&format!("d{}", i)).unwrap();
-        let rep: &str = &item.dels.to_string();
-        data = re.replace(&data, rep);
+
+    // Functions that replaces code phrases in a given string
+    fn replace(c: &str, num: u32, i: usize, data: &str) -> String {
+        let re = Regex::new(&format!("{}{}", c, i)).unwrap();
+        let rep: &str = &num.to_string();
+        re.replace(&data, rep)
+    }
+    for (i, item) in days.iter().enumerate().map(|(i, e)| (i + 1, e)) {
+        data = replace("c", item.commits, i, &data);
+        data = replace("a", item.inserts, i, &data);
+        data = replace("d", item.dels, i, &data);
     }
 
     let times = total.daytimes;
-    for (i, item) in times.iter().enumerate() {
-        let i = i + 1;
-        let re = Regex::new(&format!("cd{}", i)).unwrap();
-        let rep: &str = &item.commits.to_string();
-        data = re.replace(&data, rep);
+    for (i, item) in times.iter().enumerate().map(|(i, e)| (i + 1, e)) {
+        data = replace("cd", item.commits, i, &data);
     }
     f.write_all(data.as_bytes())?;
     Ok(())
