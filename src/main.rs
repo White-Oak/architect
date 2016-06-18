@@ -10,6 +10,8 @@ extern crate num_cpus;
 extern crate qmlrs;
 extern crate regex;
 extern crate time;
+// #[cfg(feature = "csv")]
+extern crate csv;
 
 use rustc_serialize::json;
 use std::io::prelude::*;
@@ -19,15 +21,18 @@ use time::precise_time_s;
 mod diff;
 mod stats;
 mod view;
+mod csv_output;
 
 use stats::*;
 use diff::*;
 use view::*;
+use csv_output::*;
 
 fn main() {
     let start = precise_time_s();
     let stats = gather_stats().unwrap();
     let gather_time = precise_time_s() - start;
+    csv_dump(&stats);
 
     let start = precise_time_s();
     let gathered = process(stats);

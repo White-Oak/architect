@@ -12,6 +12,7 @@ rustc-serialize = "*"
 num_cpus = "*"
 regex = "*"
 time = "*"
+csv = "*"
 
 [dependencies.qmlrs]
 git = "https://github.com/White-Oak/qmlrs"
