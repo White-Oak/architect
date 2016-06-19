@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Architect Charts</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+
+    <script>
+        {architect-data}
+
+        var rawDays = data.TOTAL.days;
+
+        google.charts.load('current', {packages: ['bar']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var dataDays = [];
+            var dataDaysTemplate = [
+                'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',
+            ];
+
+            dataDaysTemplate.forEach(function(day, i) {
+                day = [day, rawDays[i].inserts, rawDays[i].dels];
+                dataDays.push(day);
+            });
+
+            var data = google.visualization.arrayToDataTable([
+              ['Day', 'Additions', 'Deletions']
+            ].concat(dataDays));
+
+            var options = {
+              chart: {
+                title: 'Total additions/deletions for the repo',
+                subtitle: '',
+              }
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('days-chart'));
+            chart.draw(data, options);
+          }
+    </script>
+
+    <div id="days-chart" style="height:400px;width:800px"></div>
+
+</body>
+</html>

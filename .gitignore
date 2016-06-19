@@ -2,3 +2,5 @@ target
 out.json
 /chart.qml
 /data.csv
+.idea
+html/result.html
