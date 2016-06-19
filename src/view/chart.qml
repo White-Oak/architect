@@ -90,6 +90,34 @@ ApplicationWindow {
     }
     Tab {
       title: "Contributers"
+      TableView {
+        TableViewColumn {
+          role: "date"
+          title: "Year, Montth"
+          width: 100
+        }
+        TableViewColumn {
+          role: "user"
+          title: "Contributer"
+          width: 200
+        }
+        model: libraryModel
+      }
+      ListModel {
+        id: libraryModel
+        ListElement {
+          date: "2016, January"
+          user: "pakazaka"
+        }
+        ListElement {
+          date: "2016, March"
+          user: "White Oak"
+        }
+        ListElement {
+          date: "2016, April"
+          user: "ksakepon"
+        }
+      }
     }
 
   }
