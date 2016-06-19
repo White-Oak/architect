@@ -105,7 +105,7 @@ fn calculate_top_contributers_per_month(stats: &[Stat]) -> Vec<TopMonthContribut
         }
     }
     result.into_iter()
-        .sorted_by(|b, a| (a.year * 12 + a.month as u16).cmp(&(b.year * 12 + a.month as u16)))
+        .sorted_by(|b, a| (a.year * 12 +  a.month as u16).cmp(&(b.year * 12 + b.month as u16)))
         .collect()
 }
 
