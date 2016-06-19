@@ -5,6 +5,7 @@ use std::collections::*;
 use std::io::prelude::*;
 use std::fs::File;
 use rustc_serialize::json;
+use std::process::Command;
 
 pub fn output(gathered: &BTreeMap<String, ResultStat>) {
     let mut f = File::open("html/template.html").unwrap();
@@ -19,4 +20,9 @@ pub fn output(gathered: &BTreeMap<String, ResultStat>) {
     f.write_all(result.as_bytes()).unwrap();
 
     println!("Generated html/result.html, open it in your browser.");
+    #[cfg(target_os = "linux")]
+    Command::new("xdg-open")
+                     .arg("html/result.html")
+                     .output()
+                     .unwrap_or_else(|e| { panic!("failed to open html automatically: {}", e) });
 }
