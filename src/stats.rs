@@ -3,6 +3,8 @@ use diff::Stat;
 use std::collections::*;
 use chrono::*;
 use git2::Time;
+use lazysort::SortedBy;
+
 fn dt_from_gittime(time: &Time) -> DateTime<FixedOffset> {
     let secs = time.seconds();
     let naive_dt = NaiveDateTime::from_timestamp(secs, 0);
@@ -97,7 +99,7 @@ fn calculate_top_contributers_per_month(stats: &[Stat]) -> Vec<TopMonthContribut
             top_contributer.0.clone(), *top_contributer.1));
         }
     }
-    result
+    result.into_iter().sorted_by(|b, a| (a.year * 12 + a.month as u16).cmp(&(b.year * 12 + a.month as u16))).collect()
 }
 
 #[derive(RustcDecodable, RustcEncodable)]
