@@ -1,13 +1,12 @@
 #![cfg(all(feature = "cli", not(feature = "qt"), not(feature = "html")))]
-use std::collections::*;
 use ansi_term::Colour::{Green, Red, Yellow};
 use lazysort::SortedBy;
 
 use super::super::stats::*;
 
-pub fn output(gathered: &BTreeMap<String, ResultStat>) {
+pub fn output(gathered: &AllResultStat) {
     // Create a sorted iterator of statistics
-    let iter = gathered.values().sorted_by(|b, a| a.stat.commits.cmp(&b.stat.commits));
+    let iter = gathered.common_stats.values().sorted_by(|b, a| a.stat.commits.cmp(&b.stat.commits));
     for stat in iter {
         fn print_main_stats(stats: &[MainStat]) {
             print!("Commits\t");
@@ -27,7 +26,7 @@ pub fn output(gathered: &BTreeMap<String, ResultStat>) {
             println!("");
             println!("");
         }
-        println!("Statistics for {} <{}>", stat.author, stat.email);
+        println!("Statistics for {} <{}>", stat.sign.0, stat.sign.1);
         println!("Commits: {}; Insertions: {}; Deletions: {}",
                  Yellow.paint(stat.stat.commits.to_string()),
                  Green.paint(stat.stat.inserts.to_string()),
