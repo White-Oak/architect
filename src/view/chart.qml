@@ -90,33 +90,38 @@ ApplicationWindow {
     }
     Tab {
       title: "Contributers"
+      anchors.fill: parent
+
       TableView {
+        ListModel {
+          id: contrs
+        }
         TableViewColumn {
           role: "date"
-          title: "Year, Montth"
-          width: 100
+          title: "Year, Month"
+          width: 200
         }
         TableViewColumn {
           role: "user"
           title: "Contributer"
           width: 200
         }
-        model: libraryModel
-      }
-      ListModel {
-        id: libraryModel
-        ListElement {
-          date: "2016, January"
-          user: "pakazaka"
+        TableViewColumn {
+          role: "commits"
+          title: "Commits"
+          width: 100
         }
-        ListElement {
-          date: "2016, March"
-          user: "White Oak"
+        TableViewColumn {
+          role: "adds"
+          title: "Adds"
+          width: 80
         }
-        ListElement {
-          date: "2016, April"
-          user: "ksakepon"
+        TableViewColumn {
+          role: "dels"
+          title: "Dels"
+          width: 80
         }
+        model: contrs
       }
     }
 
