@@ -11,19 +11,24 @@
         {architect-data}
 
         var rawDays = data.TOTAL.days;
+        var rawDaytimes = data.TOTAL.daytimes;
 
-        google.charts.load('current', {packages: ['bar']});
+        google.charts.load('current', {packages: ['bar', 'corechart']});
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
             var dataDays = [];
+            var pieDays = [];
             var dataDaysTemplate = [
                 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',
             ];
 
             dataDaysTemplate.forEach(function(day, i) {
-                day = [day, rawDays[i].inserts, rawDays[i].dels];
-                dataDays.push(day);
+                var dataDay = [day, rawDays[i].inserts, rawDays[i].dels];
+                dataDays.push(dataDay);
+
+                var pieDay = [day, rawDays[i].commits];
+                pieDays.push(pieDay);
             });
 
             var data = google.visualization.arrayToDataTable([
@@ -39,10 +44,40 @@
 
             var chart = new google.charts.Bar(document.getElementById('days-chart'));
             chart.draw(data, options);
+
+            // week day
+            var data = google.visualization.arrayToDataTable([
+              ['Day', 'Commits per Day']
+            ].concat(pieDays));
+
+            var options = {
+              title: 'Commits in repo by day'
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('pie-days-chart'));
+            chart.draw(data, options);
+
+            // daytime
+            var data = google.visualization.arrayToDataTable([
+              ['Daytime', 'Commits per daytime'],
+              ['Morning', rawDaytimes[0].commits],
+              ['Day', rawDaytimes[1].commits],
+              ['Evening', rawDaytimes[2].commits],
+              ['Night', rawDaytimes[3].commits],
+            ]);
+
+            var options = {
+              title: 'Commits in repo by time'
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('pie-daytime-chart'));
+            chart.draw(data, options);
           }
     </script>
 
     <div id="days-chart" style="height:400px;width:800px"></div>
+    <div id="pie-days-chart" style="height:400px;width:400px;display:inline-block"></div>
+    <div id="pie-daytime-chart" style="height:400px;width:400px;display:inline-block"></div>
 
 </body>
 </html>
