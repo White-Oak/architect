@@ -22,7 +22,7 @@ pub fn output(gathered: &BTreeMap<String, ResultStat>) {
     println!("Generated html/result.html, open it in your browser.");
     #[cfg(target_os = "linux")]
     Command::new("xdg-open")
-                     .arg("html/result.html")
-                     .output()
-                     .unwrap_or_else(|e| { panic!("failed to open html automatically: {}", e) });
+        .arg("html/result.html")
+        .output()
+        .unwrap_or_else(|e| panic!("failed to open html automatically: {}", e));
 }

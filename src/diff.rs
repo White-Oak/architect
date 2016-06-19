@@ -54,8 +54,8 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     let size = total / threads_num;
     println!("Total: {}", total);
     println!("Counting on {} threads with {} commits per one",
-    threads_num,
-    size);
+             threads_num,
+             size);
     print!("0/{}", total);
     stdout().flush().unwrap();
 

@@ -28,14 +28,14 @@ struct LocalStat {
     pub message: String,
 }
 
-impl LocalStat{
+impl LocalStat {
     fn from_stat(stat: Stat) -> Self {
         let message = match stat.message {
             Some(m) => m,
-            None => "".to_string()
+            None => "".to_string(),
         };
         // let message = message.replace("\n", "\\n");
-        LocalStat{
+        LocalStat {
             id: stat.id.to_string(),
             author: stat.author,
             email: stat.email,

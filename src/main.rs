@@ -46,6 +46,8 @@ fn main() {
     let mut f = File::create("out.json").unwrap();
     f.write_all(encoded.as_bytes()).unwrap();
 
-    println!("Gathered diffs data in {} secs and processed stats in {} secs", gather_time, stat_time);
+    println!("Gathered diffs data in {} secs and processed stats in {} secs",
+             gather_time,
+             stat_time);
     output(&gathered);
 }

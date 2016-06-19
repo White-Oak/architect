@@ -1,4 +1,4 @@
-#![cfg(all(feature = "cli", not(feature = "qt")))]
+#![cfg(all(feature = "cli", not(feature = "qt"), not(feature = "html")))]
 use std::collections::*;
 use ansi_term::Colour::{Green, Red, Yellow};
 use lazysort::SortedBy;
