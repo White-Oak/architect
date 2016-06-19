@@ -13,9 +13,9 @@ fn dt_from_gittime(time: &Time) -> DateTime<FixedOffset> {
 }
 
 pub fn process(stats: Vec<Stat>) -> AllResultStat {
-    AllResultStat{
+    AllResultStat {
         top_monthly: calculate_top_contributers_per_month(&stats),
-        common_stats: get_more_author_stats(&stats)
+        common_stats: get_more_author_stats(&stats),
     }
 }
 
@@ -81,7 +81,8 @@ fn calculate_top_contributers_per_month(stats: &[Stat]) -> Vec<TopMonthContribut
         dt.year() == dt2.year() && dt.month0() == dt2.month0()
     }
     while map.values().map(|vec| vec.len()).sum::<usize>() < stats.len() {
-        let filtered: Vec<&Stat> = stats.iter().filter(|i| same_month(dt_from_gittime(&i.time), now)).collect();
+        let filtered: Vec<&Stat> =
+            stats.iter().filter(|i| same_month(dt_from_gittime(&i.time), now)).collect();
         map.insert(now, filtered);
         let mut year = now.year();
         let month = if let Some(m) = now.month0().checked_sub(1) {
@@ -94,12 +95,18 @@ fn calculate_top_contributers_per_month(stats: &[Stat]) -> Vec<TopMonthContribut
     }
     let mut result = Vec::new();
     for (dt, vec) in map.into_iter() {
-        if let Some(top_contributer) = get_authors_stats(&vec).iter().max_by_key(|&(_, i)| i.commits){
-            result.push(TopMonthContributer::new(dt.year() as u16, dt.month0() as u8,
-            top_contributer.0.clone(), *top_contributer.1));
+        if let Some(top_contributer) = get_authors_stats(&vec)
+            .iter()
+            .max_by_key(|&(_, i)| i.commits) {
+            result.push(TopMonthContributer::new(dt.year() as u16,
+                                                 dt.month0() as u8,
+                                                 top_contributer.0.clone(),
+                                                 *top_contributer.1));
         }
     }
-    result.into_iter().sorted_by(|b, a| (a.year * 12 + a.month as u16).cmp(&(b.year * 12 + a.month as u16))).collect()
+    result.into_iter()
+        .sorted_by(|b, a| (a.year * 12 + a.month as u16).cmp(&(b.year * 12 + a.month as u16)))
+        .collect()
 }
 
 #[derive(RustcDecodable, RustcEncodable)]
@@ -108,16 +115,16 @@ pub struct TopMonthContributer {
     pub year: u16,
     pub month: u8,
     pub sign: Author,
-    pub stat: MainStat
+    pub stat: MainStat,
 }
 
-impl TopMonthContributer{
-    fn new(year: u16, month: u8, author: Author, stat: MainStat) -> Self{
+impl TopMonthContributer {
+    fn new(year: u16, month: u8, author: Author, stat: MainStat) -> Self {
         TopMonthContributer {
             year: year,
             month: month,
             sign: author,
-            stat: stat
+            stat: stat,
         }
     }
 }
@@ -131,7 +138,7 @@ pub struct AllResultStat {
 
 #[derive(RustcDecodable, RustcEncodable)]
 #[derive(PartialEq, Eq, Hash, Clone)]
-pub struct Author (pub String, pub String);
+pub struct Author(pub String, pub String);
 
 #[derive(RustcDecodable, RustcEncodable)]
 #[derive(Clone)]
