@@ -25,4 +25,10 @@ pub fn output(gathered: &BTreeMap<String, ResultStat>) {
         .arg("html/result.html")
         .output()
         .unwrap_or_else(|e| panic!("failed to open html automatically: {}", e));
+
+    #[cfg(target_os = "macos")]
+    Command::new("open")
+        .arg("html/result.html")
+        .output()
+        .unwrap_or_else(|e| panic!("failed to open html automatically: {}", e));
 }
