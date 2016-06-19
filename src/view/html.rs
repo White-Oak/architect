@@ -1,8 +1,6 @@
 #![cfg(feature = "html")]
 use super::super::stats::*;
 
-extern crate rustc_serialize;
-
 use std::collections::*;
 use std::io::prelude::*;
 use std::fs::File;
