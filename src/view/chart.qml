@@ -95,6 +95,7 @@ ApplicationWindow {
       TableView {
         ListModel {
           id: contrs
+          LISTS
         }
         TableViewColumn {
           role: "date"
