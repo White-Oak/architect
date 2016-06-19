@@ -103,10 +103,11 @@ fn calculate_top_contributers_per_month(stats: &[Stat]) -> Vec<TopMonthContribut
 }
 
 #[derive(RustcDecodable, RustcEncodable)]
+#[derive(Clone)]
 pub struct TopMonthContributer {
     pub year: u16,
     pub month: u8,
-    pub author: Author,
+    pub sign: Author,
     pub stat: MainStat
 }
 
@@ -115,13 +116,14 @@ impl TopMonthContributer{
         TopMonthContributer {
             year: year,
             month: month,
-            author: author,
+            sign: author,
             stat: stat
         }
     }
 }
 
 #[derive(RustcDecodable, RustcEncodable)]
+#[derive(Clone)]
 pub struct AllResultStat {
     pub top_monthly: Vec<TopMonthContributer>,
     pub common_stats: BTreeMap<String, ResultStat>,
@@ -132,6 +134,7 @@ pub struct AllResultStat {
 pub struct Author (pub String, pub String);
 
 #[derive(RustcDecodable, RustcEncodable)]
+#[derive(Clone)]
 pub struct ResultStat {
     pub sign: Author,
     pub stat: MainStat,
