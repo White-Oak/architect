@@ -3,7 +3,6 @@ use diff::Stat;
 use std::collections::*;
 use chrono::*;
 use git2::Time;
-
 fn dt_from_gittime(time: &Time) -> DateTime<FixedOffset> {
     let secs = time.seconds();
     let naive_dt = NaiveDateTime::from_timestamp(secs, 0);
@@ -76,8 +75,11 @@ fn get_authors_stats(stats: &[&Stat]) -> HashMap<Author, MainStat> {
 fn calculate_top_contributers_per_month(stats: &[Stat]) -> Vec<TopMonthContributer> {
     let mut now = Local::now();
     let mut map: HashMap<DateTime<Local>, Vec<&Stat>> = HashMap::new();
+    fn same_month<T: Datelike, T2: Datelike>(dt: T, dt2: T2) -> bool {
+        dt.year() == dt2.year() && dt.month0() == dt2.month0()
+    }
     while map.values().map(|vec| vec.len()).sum::<usize>() < stats.len() {
-        let filtered = stats.iter().filter(|i| dt_from_gittime(&i.time) == now).collect();
+        let filtered: Vec<&Stat> = stats.iter().filter(|i| same_month(dt_from_gittime(&i.time), now)).collect();
         map.insert(now, filtered);
         let mut year = now.year();
         let month = if let Some(m) = now.month0().checked_sub(1) {
