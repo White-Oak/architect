@@ -1,86 +1,129 @@
 import QtQuick 2.0
 import QtCharts 2.0
 import QtQuick.Layouts 1.0
-import QtQuick.Controls 1.2
-
+import QtQuick.Controls 1.3
 ApplicationWindow {
   visible: true
   title: "Architect View"
   minimumWidth: 1200
-  minimumHeight: 800
+  minimumHeight: 800 + 100
+  x: 400
+  y: 100
 
-  // property int margin: 5
-  // width: mainLayout.implicitWidth + 2 * margin
-  // height: mainLayout.implicitHeight + 2 * margin
-  // minimumWidth: mainLayout.Layout.minimumWidth + 2 * margin
-  // minimumHeight: mainLayout.Layout.minimumHeight + 2 * margin
+  TabView {
+    id: tabs
+    anchors.fill: parent
+    Tab {
+      id: tab
+      title: "Summary"
+      anchors.fill: parent
+      ColumnLayout {
+        anchors.fill: parent
+        spacing: 0
+        ChartView {
+          id: chart
+          Layout.minimumHeight: 400
+          Layout.minimumWidth: 800
+          Layout.fillWidth: true
+          Layout.fillHeight: true
 
-  ColumnLayout {
-    width: 1200
-    height: 800
+          theme: ChartView.ChartThemeBrownSand
+          antialiasing: true
+          title: "Additions and Deletions in repo"
 
-    ChartView {
-      id: chart
-      width: 1200
-      height: 400
-      Layout.alignment: Qt.AlignTop
+          BarSeries {
+            id: mySeries
+            axisX: BarCategoryAxis { categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ] }
+            BarSet { label: "Additions"; values: [a1, a2, a3, a4, a5, a6, a7]; color: "green" }
+            BarSet { label: "Deletions"; values: [d1, d2, d3, d4, d5, d6, d7]; color: "red" }
+          }
+        }
 
-      theme: ChartView.ChartThemeBrownSand
-      antialiasing: true
-      title: "Additions and Deletions in repo"
+        RowLayout {
+          id: mainLayout
+          spacing: 0
 
-      BarSeries {
-        id: mySeries
-        axisX: BarCategoryAxis { categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ] }
-        BarSet { label: "Additions"; values: [a1, a2, a3, a4, a5, a6, a7]; color: "green" }
-        BarSet { label: "Deletions"; values: [d1, d2, d3, d4, d5, d6, d7]; color: "red" }
+          ChartView {
+            id: chartDay
+            Layout.minimumWidth: 600
+            Layout.minimumHeight: 400
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            title: "Commits in repo by day"
+            legend.visible: false
+            antialiasing: true
+
+            PieSeries {
+              id: pieSeriesDay
+              PieSlice { label: "Mon"; labelVisible:true; value: c1 }
+              PieSlice { label: "Tue"; labelVisible:true; value: c2  }
+              PieSlice { label: "Wed"; labelVisible:true; value: c3  }
+              PieSlice { label: "Thu"; labelVisible:true; value: c4  }
+              PieSlice { label: "Fri"; labelVisible:true; value: c5  }
+              PieSlice { label: "Sat"; labelVisible:true; value: c6  }
+              PieSlice { label: "Sun"; labelVisible:true; value: c7  }
+            }
+          }
+
+          ChartView {
+            id: chartTime
+            Layout.minimumWidth: 600
+            Layout.minimumHeight: 400
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            title: "Commits in repo by time"
+            legend.visible: false
+            antialiasing: true
+
+            PieSeries {
+              id: pieSeriesTime
+              PieSlice { label: "Morning"; labelVisible:true; value: cdt1 }
+              PieSlice { label: "Day"; labelVisible:true; value: cdt2  }
+              PieSlice { label: "Evening"; labelVisible:true; value: cdt3  }
+              PieSlice { label: "Night"; labelVisible:true; value: cdt4  }
+            }
+          }
+        }
+      }
+    }
+    Tab {
+      title: "Contributers"
+      anchors.fill: parent
+
+      TableView {
+        ListModel {
+          id: contrs
+        }
+        TableViewColumn {
+          role: "date"
+          title: "Year, Month"
+          width: 200
+        }
+        TableViewColumn {
+          role: "user"
+          title: "Contributer"
+          width: 200
+        }
+        TableViewColumn {
+          role: "commits"
+          title: "Commits"
+          width: 100
+        }
+        TableViewColumn {
+          role: "adds"
+          title: "Adds"
+          width: 80
+        }
+        TableViewColumn {
+          role: "dels"
+          title: "Dels"
+          width: 80
+        }
+        model: contrs
       }
     }
 
-    RowLayout {
-      id: mainLayout
-      width: 1200
-      height: 400
-      Layout.alignment: Qt.AlignBottom
-
-      ChartView {
-        id: chartDay
-        width: 600
-        height: 400
-
-        title: "Commits in repo by day"
-        legend.visible: false
-        antialiasing: true
-
-        PieSeries {
-          id: pieSeriesDay
-          PieSlice { label: "Mon"; labelVisible:true; value: c1 }
-          PieSlice { label: "Tue"; labelVisible:true; value: c2  }
-          PieSlice { label: "Wed"; labelVisible:true; value: c3  }
-          PieSlice { label: "Thu"; labelVisible:true; value: c4  }
-          PieSlice { label: "Fri"; labelVisible:true; value: c5  }
-          PieSlice { label: "Sat"; labelVisible:true; value: c6  }
-          PieSlice { label: "Sun"; labelVisible:true; value: c7  }
-        }
-      }
-
-      ChartView {
-        id: chartTime
-        width: 600
-        height: 400
-
-        title: "Commits in repo by time"
-        legend.visible: false
-        antialiasing: true
-
-        PieSeries {
-          id: pieSeriesTime
-          PieSlice { label: "Morning"; labelVisible:true; value: cdt1 }
-          PieSlice { label: "Day"; labelVisible:true; value: cdt2  }
-          PieSlice { label: "Evening"; labelVisible:true; value: cdt3  }
-          PieSlice { label: "Night"; labelVisible:true; value: cdt4  }
-        }
-      }
-    }
   }
 }

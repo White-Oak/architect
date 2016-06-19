@@ -1,14 +1,13 @@
 #![cfg(feature = "qt")]
 use super::super::stats::*;
 
-use std::collections::*;
 use qmlrs::*;
 use std::io::prelude::*;
 use std::fs::File;
 use std::io::Error;
 
-pub fn output(gathered: &BTreeMap<String, ResultStat>) {
-    save_data(gathered.get("TOTAL").unwrap()).unwrap();
+pub fn output(gathered: &AllResultStat) {
+    save_data(gathered.common_stats.get("TOTAL").unwrap()).unwrap();
     let mut engine = Engine::new();
 
     engine.load_local_file("chart.qml");

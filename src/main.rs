@@ -1,5 +1,6 @@
 #![feature(question_mark)]
 #![feature(stmt_expr_attributes)]
+#![feature(iter_arith)]
 extern crate git2;
 extern crate ansi_term;
 extern crate chrono;

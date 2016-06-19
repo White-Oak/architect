@@ -1,14 +1,13 @@
 #![cfg(feature = "html")]
 use super::super::stats::*;
 
-use std::collections::*;
 use std::io::prelude::*;
 use std::fs::File;
 use rustc_serialize::json;
 use std::process::Command;
 
-pub fn output(gathered: &BTreeMap<String, ResultStat>) {
-    let json_data = json::encode(&gathered).unwrap();
+pub fn output(gathered: &AllResultStat) {
+    let json_data = json::encode(&gathered.common_stats).unwrap();
     let script = format!("var data = {};", json_data);
     let result: String = include_str!("template.html").replace("{architect-data}", &script);
 
