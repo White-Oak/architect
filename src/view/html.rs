@@ -7,7 +7,7 @@ use rustc_serialize::json;
 use std::process::Command;
 
 pub fn output(gathered: &AllResultStat) {
-    let json_data = json::encode(&gathered.common_stats).unwrap();
+    let json_data = json::encode(&gathered.common_stats.get("TOTAL").unwrap()).unwrap();
     let script = format!("var data = {};", json_data);
     let result: String = include_str!("template.html").replace("{architect-data}", &script);
 

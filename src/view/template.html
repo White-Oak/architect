@@ -10,8 +10,8 @@
     <script>
         {architect-data}
 
-        var rawDays = data.TOTAL.days;
-        var rawDaytimes = data.TOTAL.daytimes;
+        var rawDays = data.days;
+        var rawDaytimes = data.daytimes;
 
         google.charts.load('current', {packages: ['bar', 'corechart']});
         google.charts.setOnLoadCallback(drawChart);

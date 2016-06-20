@@ -14,9 +14,6 @@ extern crate time;
 #[cfg(feature = "csvdump")]
 extern crate csv;
 
-use rustc_serialize::json;
-use std::io::prelude::*;
-use std::fs::File;
 use time::precise_time_s;
 
 mod diff;
@@ -41,11 +38,6 @@ fn main() {
     let start = precise_time_s();
     let gathered = process(stats);
     let stat_time = precise_time_s() - start;
-
-    let encoded = json::encode(&gathered).unwrap();
-
-    let mut f = File::create("out.json").unwrap();
-    f.write_all(encoded.as_bytes()).unwrap();
 
     println!("Gathered diffs data in {} secs and processed stats in {} secs",
              gather_time,
