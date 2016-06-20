@@ -19,11 +19,9 @@ optional = true
 
 [dependencies.csv]
 version = "*"
-optional = true
 
 [features]
 default = ["cli"]
 cli = []
 html = []
 qt = ["qmlrs"]
-csvdump = ["csv"]

@@ -11,7 +11,6 @@ extern crate num_cpus;
 #[cfg(feature = "qt")]
 extern crate qmlrs;
 extern crate time;
-#[cfg(feature = "csvdump")]
 extern crate csv;
 
 use time::precise_time_s;
@@ -24,7 +23,6 @@ mod csv_output;
 use stats::*;
 use diff::*;
 use view::*;
-#[cfg(feature = "csvdump")]
 use csv_output::*;
 
 fn main() {
@@ -32,7 +30,7 @@ fn main() {
     let stats = gather_stats().unwrap();
     let gather_time = precise_time_s() - start;
 
-    #[cfg(feature = "csvdump")]
+    // Dump to start from cache later
     csv_dump(&stats);
 
     let start = precise_time_s();
