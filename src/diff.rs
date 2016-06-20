@@ -99,7 +99,15 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
         let counter = arc_current.load(Ordering::Relaxed);
         let of_half_percents = counter * 200 / total;
         if of_half_percents - last_percent >= 1 {
-            print!("\r{}/{}", arc_current.load(Ordering::Relaxed), total);
+            print!("\r[");
+            for i in 0..50 {
+                if i < of_half_percents / 4 {
+                    print!("■");
+                } else {
+                    print!(" ");
+                }
+            }
+            print!("] {}/{}", counter, total);
             stdout().flush().unwrap();
             last_percent = of_half_percents;
         }
@@ -114,7 +122,6 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     for _ in 0..threads_num {
         stats.append(&mut rx.recv().unwrap());
     }
-    print!("\r{}/{}", total, total);
     println!("");
     Ok(stats)
 }
