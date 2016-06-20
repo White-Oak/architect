@@ -7,7 +7,9 @@ use std::fs::File;
 use std::io::Error;
 
 pub fn output(gathered: &AllResultStat) {
-    save_data(gathered.common_stats.get("TOTAL").unwrap(), &gathered.top_monthly).unwrap();
+    save_data(gathered.common_stats.get("TOTAL").unwrap(),
+              &gathered.top_monthly)
+        .unwrap();
     let mut engine = Engine::new();
 
     engine.load_local_file("chart.qml");
@@ -48,14 +50,24 @@ fn save_data(total: &ResultStat, top_contr: &Vec<TopMonthContributer>) -> Result
                                          "October",
                                          "November",
                                          "December"];
-    let s: String = top_contr.into_iter().map(|t| format!(r#"ListElement {{
+    let s: String = top_contr.into_iter()
+        .map(|t| {
+            format!(r#"ListElement {{
     date: "Year {}, {}"
     user: "{}"
     commits: {}
     adds: {}
     dels: {}
 }}
-"#, t.year, MONTHES[t.month as usize], t.sign.0, t.stat.commits, t.stat.inserts, t.stat.dels)).collect();
+"#,
+                    t.year,
+                    MONTHES[t.month as usize],
+                    t.sign.0,
+                    t.stat.commits,
+                    t.stat.inserts,
+                    t.stat.dels)
+        })
+        .collect();
     data = data.replace("LISTS", &s);
 
     f.write_all(data.as_bytes())?;
