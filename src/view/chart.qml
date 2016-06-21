@@ -125,6 +125,18 @@ ApplicationWindow {
         model: contrs
       }
     }
+    Tab {
+      title: "Misc"
+      ChartView {
+      title: "Language stats"
+      anchors.fill: parent
+      antialiasing: true
 
+      PercentBarSeries {
+          axisX: BarCategoryAxis { categories: [LANG_DATES] }
+          LANG_BARS
+      }
+  }
+}
   }
 }

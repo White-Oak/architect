@@ -172,7 +172,7 @@ fn calc_lang_stats(stat: &Stat) -> Result<LanguageStatSnapshot, Error>{
         s.add_assign(1);
     }
     let dt = dt_from_gittime(&stat.time);
-    Ok(LanguageStatSnapshot(dt.year(), dt.month0(), map.into_iter().collect()))
+    Ok(LanguageStatSnapshot(dt.year(), dt.month0(), map))
 }
 
 #[derive(RustcDecodable, RustcEncodable)]
@@ -204,7 +204,7 @@ pub struct AllResultStat {
 
 #[derive(RustcDecodable, RustcEncodable)]
 #[derive(Default, Debug, Clone)]
-pub struct LanguageStatSnapshot(i32, u32, Vec<(String, u32)>);
+pub struct LanguageStatSnapshot(pub i32, pub u32, pub HashMap<String, u32>);
 
 #[derive(RustcDecodable, RustcEncodable)]
 #[derive(PartialEq, Eq, Hash, Clone)]
