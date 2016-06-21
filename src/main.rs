@@ -27,11 +27,15 @@ use csv_output::*;
 
 fn main() {
     let start = precise_time_s();
-    let stats = gather_stats().unwrap();
+    let stats = if let Ok(s) = csv_load() {
+        s
+    } else {
+        let s = gather_stats().unwrap();
+        // Dump to start from cache later
+        csv_dump(&s);
+        s
+    };
     let gather_time = precise_time_s() - start;
-
-    // Dump to start from cache later
-    csv_dump(&stats);
 
     let start = precise_time_s();
     let gathered = process(stats);
