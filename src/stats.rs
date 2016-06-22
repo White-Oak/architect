@@ -145,9 +145,6 @@ fn calc_lang_stats_at_five_points(stats: &[Stat]) -> [LanguageStatSnapshot; 5] {
             break;
         }
     }
-    for item in &got_stats {
-        println!("{:?}", item);
-    }
     got_stats
 }
 
@@ -155,7 +152,6 @@ use std::ops::AddAssign;
 fn calc_lang_stats(stat: &Stat) -> Result<LanguageStatSnapshot, Error> {
     let repo = Repository::open(".")?;
     let tree = repo.find_commit(stat.id)?.tree().unwrap();
-    println!("In {}:", stat.id);
     fn map_blobs(tree: &Tree, repo: &Repository) -> Result<Vec<(String, u32)>, Error> {
         let vecs: Vec<Vec<(String, u32)>> = tree.iter()
             .map(|item| match item.kind().unwrap() {
