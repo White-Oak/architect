@@ -179,6 +179,10 @@ fn calc_lang_stats(stat: &Stat) -> Result<LanguageStatSnapshot, Error> {
         let s = map.get_mut(&ext).unwrap();
         s.add_assign(num);
     }
+    const IGNORED_EXTENSIONS: [&'static str; 4] = ["lock", "png", "jpg", "gitignore"];
+    for ext in &IGNORED_EXTENSIONS {
+        map.remove(&ext.to_string());
+    }
     let dt = dt_from_gittime(&stat.time);
     Ok(LanguageStatSnapshot(dt.year(), dt.month0(), map))
 }
