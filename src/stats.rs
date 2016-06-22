@@ -156,8 +156,13 @@ fn calc_lang_stats(stat: &Stat) -> Result<LanguageStatSnapshot, Error> {
         let vecs: Vec<Vec<(String, u32)>> = tree.iter()
             .map(|item| match item.kind().unwrap() {
                 ObjectType::Blob => {
-                    Ok(vec![(item.name().unwrap().to_string(),
-                             item.to_object(repo)?.as_blob().unwrap().content().len() as u32)])
+                    let object = item.to_object(repo)?;
+                    let blob = object.as_blob().unwrap();
+                    if !blob.is_binary() {
+                        Ok(vec![(item.name().unwrap().to_string(), blob.content().len() as u32)])
+                    } else {
+                        Ok(Vec::new())
+                    }
                 }
                 ObjectType::Tree => map_blobs(item.to_object(repo)?.as_tree().unwrap(), repo),
                 ObjectType::Commit => Ok(Vec::new()),
