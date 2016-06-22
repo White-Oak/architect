@@ -164,14 +164,28 @@ fn calc_lang_stats(stat: &Stat) -> Result<LanguageStatSnapshot, Error> {
                              item.to_object(repo)?.as_blob().unwrap().content().len() as u32)])
                 }
                 ObjectType::Tree => map_blobs(item.to_object(repo)?.as_tree().unwrap(), repo),
-                _ => panic!("{:?}", item.kind()),
+                ObjectType::Commit => Ok(Vec::new()),
+                _ => panic!("{:?} in {:?}", item.kind(), item.name()),
             })
             .collect()?;
         Ok(vecs.into_iter().flat_map(|e| e).collect())
     }
     let mb = map_blobs(&tree, &repo)?;
-    let exts = mb.iter().map(|&(ref s, n)| (s.rsplit('.').next().unwrap().to_string(), n));
-    let mut map = HashMap::new();
+    let exts = mb.iter().map(|&(ref s, n)| {
+        let mut split = s.rsplit('.');
+        let countdots = split.clone().count();
+        if countdots < 2 {
+            ("lock".to_string(), 0)
+        } else {
+            let ext = split.next().unwrap().to_string();
+            if ext.len() == s.len() - 1 {
+                ("lock".to_string(), 0)
+            } else {
+                (ext, n)
+            }
+        }
+    });
+    let mut map: HashMap<String, u32> = HashMap::new();
     for (ext, num) in exts {
         if !map.contains_key(&ext) {
             map.insert(ext.clone(), 0);
@@ -183,6 +197,18 @@ fn calc_lang_stats(stat: &Stat) -> Result<LanguageStatSnapshot, Error> {
     for ext in &IGNORED_EXTENSIONS {
         map.remove(&ext.to_string());
     }
+    // Remove all small instances
+    let sum: u32 = map.values().sum();
+    let threshold = sum / 50;
+    let map: HashMap<String, u32> = map.into_iter()
+        .filter_map(|(k, n)| {
+            if n > threshold {
+                Some((k, n))
+            } else {
+                None
+            }
+        })
+        .collect();
     let dt = dt_from_gittime(&stat.time);
     Ok(LanguageStatSnapshot(dt.year(), dt.month0(), map))
 }
