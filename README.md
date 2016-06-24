@@ -6,13 +6,14 @@ per day and per daytime totally and per user.
 ## Screenshots
 
 * Qt version
-![Qt](resources/qt.png)
+  ![Qt](resources/qt.png)
 
+  ![Qt2](resources/qt2.png)
+
+  ![Qt3](resources/qt3.png)
 * Default, CLI version
 ![CLI](resources/cli.png)
 
-* HTML version
-![CLI](resources/html.png)
 
 ## Requirements
 
@@ -23,4 +24,4 @@ Qt version also requires a Qt installation in a system with at least following m
 
 * Default, CLI: `cargo install` to install Architect as `architect` executable.
 * Qt: `cargo install --features "qt"` to install Architect's GUI version based on Qt.
-* HTML: `cargo install --features "html"` to install Architect's HTML version.
+* HTML, a bit outdated version: `cargo install --features "html"` to install Architect's HTML version.
