@@ -2,6 +2,11 @@
 name = "architect"
 version = "0.1.0"
 authors = ["White-Oak <lpzhelud@gmail.com>"]
+description = "An app with several UIs that collect some simple git statistics"
+repository = "https://github.com/White-Oak/architect"
+readme = "README.md"
+keywords = ["git", "stats", "qt", "statistics", "qml"]
+license = "Apache-2.0"
 
 [dependencies]
 git2 = "*"
