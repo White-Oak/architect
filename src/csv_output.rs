@@ -17,7 +17,7 @@ pub fn csv_dump(stats: &[Stat]) {
 
 pub fn csv_load() -> Result<Vec<Stat>> {
     let mut r = Reader::from_file("data.csv")?.has_headers(false);
-    let ls_vec: Vec<LocalStat>  = r.decode().collect()?;
+    let ls_vec: Vec<LocalStat> = r.decode().collect()?;
     Ok(ls_vec.into_iter().map(|ls| ls.into()).collect())
 }
 

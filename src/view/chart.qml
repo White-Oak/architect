@@ -93,10 +93,6 @@ ApplicationWindow {
       anchors.fill: parent
 
       TableView {
-        ListModel {
-          id: contrs
-          LISTS
-        }
         TableViewColumn {
           role: "date"
           title: "Year, Month"
@@ -125,18 +121,18 @@ ApplicationWindow {
         model: contrs
       }
     }
-    Tab {
-      title: "Misc"
-      ChartView {
-      title: "Language stats"
-      anchors.fill: parent
-      antialiasing: true
-
-      PercentBarSeries {
-          axisX: BarCategoryAxis { categories: [LANG_DATES] }
-          LANG_BARS
-      }
-  }
-}
+    // Tab {
+    //   title: "Misc"
+    //   ChartView {
+    //     title: "Language stats"
+    //     anchors.fill: parent
+    //     antialiasing: true
+    //
+    //     PercentBarSeries {
+    //       axisX: BarCategoryAxis { categories: [LANG_DATES] }
+    //       LANG_BARS
+    //     }
+    //   }
+    // }
   }
 }

@@ -17,9 +17,8 @@ rustc-serialize = "*"
 num_cpus = "*"
 time = "*"
 
-[dependencies.qmlrs]
-git = "https://github.com/White-Oak/qmlrs"
-branch = "qtcharts-fix"
+[dependencies.qml]
+git = "https://github.com/White-Oak/qml-rust.git"
 optional = true
 
 [dependencies.csv]
@@ -29,4 +28,4 @@ version = "*"
 default = ["cli"]
 cli = []
 html = []
-qt = ["qmlrs"]
+qt = ["qml"]

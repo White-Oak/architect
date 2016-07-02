@@ -7,9 +7,8 @@ extern crate chrono;
 extern crate lazysort;
 extern crate rustc_serialize;
 extern crate num_cpus;
-#[macro_use]
 #[cfg(feature = "qt")]
-extern crate qmlrs;
+extern crate qml;
 extern crate time;
 extern crate csv;
 
