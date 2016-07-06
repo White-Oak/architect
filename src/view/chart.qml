@@ -90,7 +90,6 @@ ApplicationWindow {
     }
     Tab {
       title: "Contributers"
-      anchors.fill: parent
 
       TableView {
         TableViewColumn {
@@ -121,18 +120,25 @@ ApplicationWindow {
         model: contrs
       }
     }
-    // Tab {
-    //   title: "Misc"
-    //   ChartView {
-    //     title: "Language stats"
-    //     anchors.fill: parent
-    //     antialiasing: true
-    //
-    //     PercentBarSeries {
-    //       axisX: BarCategoryAxis { categories: [LANG_DATES] }
-    //       LANG_BARS
-    //     }
-    //   }
-    // }
+    Tab {
+      title: "Misc"
+      ChartView {
+        title: "Language stats"
+        anchors.fill: parent
+        antialiasing: true
+
+        PercentBarSeries {
+          id: barS
+          axisX: BarCategoryAxis { id: barAxis }
+          Component.onCompleted: {
+            console.log(values)
+            barAxis.categories = values[0]
+            values[1].forEach(function(item, index) {
+              barS.append(item[0], item[1]);
+            });
+          }
+        }
+      }
+    }
   }
 }
