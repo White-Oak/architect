@@ -6,6 +6,7 @@ use std::sync::mpsc::channel;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::time::Duration;
 use num_cpus;
+use crossbeam::sync::SegQueue;
 
 pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     // Open repo on '.'
@@ -43,42 +44,32 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     // Gather all commits into a list
     let mut revwalk = repo.revwalk()?;
     revwalk.push_head()?;
-    let mut commits = Vec::new();
+    let commits = Arc::new(SegQueue::new());
+    let mut total = 0;
     for commit in revwalk {
         commits.push(commit?);
+        total += 1;
     }
 
     // Find out parameters
     let threads_num = num_cpus::get();
-    let total = commits.len();
-    let size = total / threads_num;
     println!("Total: {}", total);
-    println!("Counting on {} threads with {} commits per one",
-             threads_num,
-             size);
+    println!("Counting on {} threads", threads_num);
     print!("0/{}", total);
     stdout().flush().unwrap();
 
     // Counts an amount of commits
-    let current = AtomicUsize::new(0);
-    let arc_current = Arc::new(current);
+    let current = Arc::new(AtomicUsize::new(0));
     let (tx, rx) = channel();
-    for i in 0..threads_num {
-        let arc_current = arc_current.clone();
+    for _ in 0..threads_num {
+        // Local references
+        let current = current.clone();
+        let commits = commits.clone();
         let tx = tx.clone();
-        // Get a chunk of commits for a thread
-        let commits = commits.clone().into_iter().skip(i * size);
-        let commits = if i < threads_num - 1 {
-            commits.take(size)
-        } else {
-            let num = commits.len();
-            commits.take(num)
-        };
-        // Go
         thread::spawn(move || {
             let repo = Repository::open(".").unwrap();
             let mut stats = Vec::new();
-            for next in commits {
+            while let Some(next) = commits.try_pop() {
                 let commit = repo.find_commit(next).unwrap();
                 let parents = commit.parents();
                 // Skip if merge commit
@@ -87,7 +78,7 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
                         stats.push(calculate_diff(&repo, &parent, &commit).unwrap());
                     }
                 }
-                arc_current.fetch_add(1, Ordering::Relaxed);
+                current.fetch_add(1, Ordering::Relaxed);
             }
             tx.send(stats).unwrap();
         });
@@ -96,7 +87,7 @@ pub fn gather_stats() -> Result<Vec<Stat>, Error> {
     // Checking if there is enough commits to inform user about it
     let mut last_percent = 0;
     loop {
-        let counter = arc_current.load(Ordering::Relaxed);
+        let counter = current.load(Ordering::Relaxed);
         let of_half_percents = counter * 200 / total;
         if of_half_percents - last_percent >= 1 {
             print!("\r[");

@@ -4,11 +4,12 @@ version = "0.1.0"
 dependencies = [
  "ansi_term 0.7.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono 0.2.22 (registry+https://github.com/rust-lang/crates.io-index)",
+ "crossbeam 0.2.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "csv 0.14.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "git2 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazysort 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "num_cpus 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)",
- "qml 0.0.3",
+ "qml 0.0.3 (git+https://github.com/White-Oak/qml-rust.git)",
  "rustc-serialize 0.3.19 (registry+https://github.com/rust-lang/crates.io-index)",
  "time 0.1.35 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -44,6 +45,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "gcc 0.3.28 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "crossbeam"
+version = "0.2.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "csv"
@@ -228,6 +234,7 @@ dependencies = [
 [[package]]
 name = "qml"
 version = "0.0.3"
+source = "git+https://github.com/White-Oak/qml-rust.git#92cf207ad4011c657763b1641f49794b7d4abbb0"
 dependencies = [
  "libc 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "pkg-config 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",

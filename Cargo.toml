@@ -16,6 +16,7 @@ lazysort = "*"
 rustc-serialize = "*"
 num_cpus = "*"
 time = "*"
+crossbeam = "*"
 
 [dependencies.qml]
 git = "https://github.com/White-Oak/qml-rust.git"
