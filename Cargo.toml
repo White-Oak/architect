@@ -28,5 +28,4 @@ version = "*"
 [features]
 default = ["cli"]
 cli = []
-html = []
 qt = ["qml"]

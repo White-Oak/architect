@@ -5,7 +5,7 @@ per day and per daytime totally and per user.
 
 ## Screenshots
 
-* Qt version
+* Qt version 
   ![Qt](resources/qt.png)
 
   ![Qt2](resources/qt2.png)
@@ -17,11 +17,10 @@ per day and per daytime totally and per user.
 
 ## Requirements
 
-For CLI and HTML versions Architect requires at least `Rust nightly 1.10` and `Cmake`.
+For CLI version Architect requires at least `Rust nightly 1.11` and `Cmake`.
 Qt version also requires a Qt installation in a system with at least following modules: Core, Gui, Qml, Quick, Quick Controls and Charts.
 
 ## Usage
 
 * Default, CLI: `cargo install` to install Architect as `architect` executable.
 * Qt: `cargo install --features "qt"` to install Architect's GUI version based on Qt.
-* HTML, a bit outdated version: `cargo install --features "html"` to install Architect's HTML version.
