@@ -58,9 +58,9 @@ fn save_data(gathered: &AllResultStat, engine: &mut QmlEngine) {
     let mut languages: Vec<String> = Vec::new();
     let mut categories: Vec<String> = Vec::new();
     // Fill with all languages
-    for &LanguageStatSnapshot(year, month, ref map) in gathered.lang_stats.iter() {
+    for &LanguageStatSnapshot(year, month, ref map) in &gathered.lang_stats {
         for lang in map.keys() {
-            if !languages.contains(&lang) {
+            if !languages.contains(lang) {
                 languages.push(lang.clone());
             }
         }
