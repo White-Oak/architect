@@ -168,7 +168,7 @@ fn calc_lang_stats(stat: &Stat) -> Result<LanguageStatSnapshot, Error> {
                 ObjectType::Commit => Ok(Vec::new()),
                 _ => panic!("{:?} in {:?}", item.kind(), item.name()),
             })
-            .collect()?;
+            .collect::<Result<Vec<_>, Error>>()?;
         Ok(vecs.into_iter().flat_map(|e| e).collect())
     }
     let mb = map_blobs(&tree, &repo)?;
